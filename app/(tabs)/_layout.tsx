@@ -1,6 +1,6 @@
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs'
 import { Tabs } from 'expo-router'
-import { BarChart2, Home, Sparkles, User } from 'lucide-react-native'
+import { BarChart2, Cat, Home, User } from 'lucide-react-native'
 import { MotiView } from 'moti'
 import React from 'react'
 import { Pressable, Text, View } from 'react-native'
@@ -10,7 +10,7 @@ import { cn } from '../../src/utils/formatters'
 const TAB_ICONS: Record<string, React.ElementType> = {
   index: Home,
   statistics: BarChart2,
-  pet: Sparkles,
+  pet: Cat,
   profile: User,
 }
 

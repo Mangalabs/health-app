@@ -1,4 +1,4 @@
-import { useRouter } from 'expo-router'
+import { Href, useRouter } from 'expo-router'
 import {
   CheckCircle,
   Clock,
@@ -76,7 +76,7 @@ export function MedicationsCard() {
           </View>
 
           <Pressable
-            onPress={() => router.push('/statistics')}
+            onPress={() => router.push('/medications/list' as Href)}
             accessibilityLabel='Gerenciar medicamentos'
             className='flex-shrink-0 pt-1'>
             <Text
