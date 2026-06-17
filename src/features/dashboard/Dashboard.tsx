@@ -61,10 +61,12 @@ export function Dashboard() {
         contentContainerStyle={{ paddingBottom: 112 }}
         showsVerticalScrollIndicator={false}>
         <View className='w-full max-w-[448px] self-center px-4 pt-10 pb-6 flex-col gap-6'>
-          <View>
+          <View accessibilityRole='header'>
             <Text
               className='font-bold text-foreground'
-              style={{ fontSize: 24 }}>
+              style={{ fontSize: 24 }}
+              numberOfLines={1}
+              adjustsFontSizeToFit>
               {getGreeting()}, {user.name || 'Amigo(a)'}!
             </Text>
             <Text
@@ -86,21 +88,11 @@ export function Dashboard() {
             from={{ opacity: 0, translateY: 20 }}
             animate={{ opacity: 1, translateY: 0 }}
             transition={{ type: 'timing', duration: 450, delay: 100 }}>
+            {/* Todos os cards empilhados verticalmente (Mobile First) */}
             <MedicationsCard />
-
-            <View className='flex-row gap-4'>
-              <View className='flex-1'>
-                <HydrationCard
-                  current={today.hydrationCurrent}
-                  goal={waterGoal}
-                />
-              </View>
-
-              <View className='flex-1 flex-col gap-4'>
-                <ExerciseCard completed={today.exerciseCompleted} />
-                <WeightCard />
-              </View>
-            </View>
+            <HydrationCard current={today.hydrationCurrent} goal={waterGoal} />
+            <ExerciseCard completed={today.exerciseCompleted} />
+            <WeightCard />
           </MotiView>
         </View>
       </ScrollView>

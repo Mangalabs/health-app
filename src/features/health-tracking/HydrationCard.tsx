@@ -5,11 +5,11 @@ import { Text, View } from 'react-native'
 import { healthApi } from '../../core/services/api'
 import { Button } from '../../design-system/Button'
 import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
 } from '../../design-system/Card'
 import { ProgressRing } from '../../design-system/ProgressRing'
 import { useGamificationStore } from '../gamification/store'
@@ -38,31 +38,35 @@ export function HydrationCard({
     <Card>
       <CardHeader className='pb-2'>
         <View className='flex-row items-center gap-2'>
-          <Droplet size={20} color='#7C3AED' />
-          <CardTitle className='text-purple-600'>Hidratação</CardTitle>
+          <Droplet size={20} color='#9D75CB' />
+          <CardTitle className='text-brand-purple'>Hidratação</CardTitle>
         </View>
         <CardDescription>Meta: {goal}ml / dia</CardDescription>
       </CardHeader>
       <CardContent className='flex-col items-center gap-4'>
-        <ProgressRing progress={progress} size={140} color='#7C3AED'>
-          <Text className='text-2xl font-bold'>{current}</Text>
-          <Text className='text-xs text-neutral-500'>ml</Text>
+        {/* Tamanho 120 é mais seguro em telas mobile do que 140 */}
+        <ProgressRing progress={progress} size={120} color='#9D75CB'>
+          <Text className='text-2xl font-bold text-foreground'>{current}</Text>
+          <Text className='text-xs text-muted-foreground'>ml</Text>
         </ProgressRing>
 
-        <View className='flex-row gap-2 w-full mt-4'>
+        {/* flex-wrap garante que não quebre a UI em telas fininhas como iPhone SE */}
+        <View className='flex-row flex-wrap justify-center gap-2 w-full mt-2'>
           <Button
             variant='secondary'
-            className='flex-1 bg-purple-100'
+            className='flex-1 min-w-[100px] bg-brand-lilac/20'
             onPress={() => mutation.mutate(200)}
-            disabled={mutation.isPending}>
-            <Text className='text-sm font-bold text-purple-600'>+ 200ml</Text>
+            disabled={mutation.isPending}
+            accessibilityLabel='Adicionar 200 ml de água'>
+            <Text className='text-sm font-bold text-brand-purple'>+ 200ml</Text>
           </Button>
           <Button
             variant='secondary'
-            className='flex-1 bg-purple-100'
+            className='flex-1 min-w-[100px] bg-brand-lilac/20'
             onPress={() => mutation.mutate(500)}
-            disabled={mutation.isPending}>
-            <Text className='text-sm font-bold text-purple-600'>+ 500ml</Text>
+            disabled={mutation.isPending}
+            accessibilityLabel='Adicionar 500 ml de água'>
+            <Text className='text-sm font-bold text-brand-purple'>+ 500ml</Text>
           </Button>
         </View>
       </CardContent>
