@@ -1,8 +1,7 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { Scale } from 'lucide-react-native'
+import { Weight } from 'lucide-react-native'
 import React, { useState } from 'react'
-import { View } from 'react-native'
-import { healthApi } from '../../core/services/api'
+import { Text, View } from 'react-native'
+import Toast from 'react-native-toast-message'
 import { Button } from '../../design-system/Button'
 import {
   Card,
@@ -12,23 +11,42 @@ import {
   CardTitle,
 } from '../../design-system/Card'
 import { Input } from '../../design-system/Input'
+import { useWeightStore } from './store'
+
+const formatShortDate = (dateStr: string) => {
+  const [y, m, d] = dateStr.split('-')
+  return `${d}/${m}`
+}
 
 export function WeightCard() {
-  const [weightInput, setWeightInput] = useState('')
-  const queryClient = useQueryClient()
+  const logs = useWeightStore((state) => state.logs)
+  const addOrUpdateWeight = useWeightStore((state) => state.addOrUpdateWeight)
 
-  const mutation = useMutation({
-    mutationFn: (weight: number) => healthApi.addWeightLog(weight),
-    onSuccess: () => {
-      setWeightInput('')
-      queryClient.invalidateQueries({ queryKey: ['weightLogs'] })
-    },
-  })
+  const today = new Date().toISOString().split('T')[0]
+  const todayLog = logs.find((l) => l.date === today)
+
+  const lastLog = [...logs]
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    .find((l) => l.date !== today)
+
+  const [weightInput, setWeightInput] = useState('')
 
   const handleSubmit = () => {
-    const val = parseFloat(weightInput.replace(',', '.')) // Lida com vírgulas
+    const val = parseFloat(weightInput.replace(',', '.'))
     if (!isNaN(val) && val > 0) {
-      mutation.mutate(val)
+      addOrUpdateWeight(val)
+      setWeightInput('')
+      Toast.show({
+        type: 'success',
+        text1: 'Peso atualizado!',
+        text2: `${val} kg registrado.`,
+      })
+    } else {
+      Toast.show({
+        type: 'error',
+        text1: 'Valor inválido',
+        text2: 'Insira um peso numérico.',
+      })
     }
   }
 
@@ -36,31 +54,44 @@ export function WeightCard() {
     <Card>
       <CardHeader className='pb-2'>
         <View className='flex-row items-center gap-2'>
-          <Scale size={20} color='#9D75CB' />
+          <Weight size={20} color='#9D75CB' />
           <CardTitle className='text-brand-purple'>Peso Corporal</CardTitle>
         </View>
-        <CardDescription>Acompanhe sua evolução</CardDescription>
+        <CardDescription>Acompanhe sua evolução diária</CardDescription>
       </CardHeader>
-      <CardContent>
-        <View className='flex-row items-center gap-3 w-full'>
-          <View className='flex-1'>
+
+      <CardContent className='pt-2 space-y-4'>
+        <View className='flex-row gap-3'>
+          <View className='flex-1 bg-brand-lilac/10 border border-brand-lilac/20 rounded-2xl p-4'>
+            <Text className='text-muted-foreground text-[11px] uppercase font-bold mb-1'>
+              Hoje
+            </Text>
+            <Text className='text-xl font-bold text-brand-purple'>
+              {todayLog ? `${todayLog.weightKg} kg` : '--'}
+            </Text>
+          </View>
+        </View>
+
+        <View className='space-y-6'>
+          <Text className='text-xs text-muted-foreground ml-1 mt-4'>
+            {todayLog
+              ? 'Deseja atualizar seu peso de hoje?'
+              : 'Registrar peso atual'}
+          </Text>
+          <View className='flex-row items-center gap-2'>
             <Input
               keyboardType='numeric'
               placeholder='Ex: 68.5'
               value={weightInput}
               onChangeText={setWeightInput}
-              className='w-full bg-surface-secondary'
-              accessibilityLabel='Digite seu peso atual'
+              className='flex-1 bg-surface-secondary'
+            />
+            <Button
+              onPress={handleSubmit}
+              label={todayLog ? 'Atualizar' : 'Salvar'}
+              className='px-6'
             />
           </View>
-          <Button
-            variant='default'
-            disabled={!weightInput || mutation.isPending}
-            className='px-5 flex-shrink-0'
-            label='Salvar'
-            onPress={handleSubmit}
-            accessibilityLabel='Salvar peso'
-          />
         </View>
       </CardContent>
     </Card>
