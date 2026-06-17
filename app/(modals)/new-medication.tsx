@@ -1,10 +1,6 @@
 import React from 'react'
-import { Text, View } from 'react-native'
+import { MedicationForm } from '../../src/features/medications/MedicationForm'
 
-export default function NewMedicationModal() {
-  return (
-    <View className='flex-1 bg-white items-center justify-center'>
-      <Text className='text-xl font-bold'>Novo Medicamento</Text>
-    </View>
-  )
+export default function MedicationFormScreen() {
+  return <MedicationForm />
 }
