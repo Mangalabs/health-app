@@ -1,23 +1,25 @@
+import { Fire02Icon, Rocket02Icon } from '@hugeicons/core-free-icons'
+import { HugeiconsIcon } from '@hugeicons/react-native'
 import { MotiView } from 'moti'
 import React from 'react'
-import { Text, View } from 'react-native'
+import { Image, Text, View } from 'react-native'
 import { cn } from '../../utils/formatters'
 import { useGamificationStore } from './store'
 
+function getPetImage(petState: string) {
+  switch (petState) {
+    case 'happy':
+      return require('../../../assets/images/gatinho-app-superfeliz-removebg-preview.png')
+    case 'sleepy':
+      return require('../../../assets/images/gatinho-app-feliz-removebg-preview.png')
+    case 'neutral':
+    default:
+      return require('../../../assets/images/gatinho-app-neutro-removebg-preview.png')
+  }
+}
+
 export function VirtualPet({ className }: { className?: string }) {
   const { petState, petName, xp, level, streak } = useGamificationStore()
-
-  const getPetEmoji = () => {
-    switch (petState) {
-      case 'happy':
-        return '✨🦊✨'
-      case 'sleepy':
-        return '💤🦊💤'
-      case 'neutral':
-      default:
-        return '🦊'
-    }
-  }
 
   const getPetAnimation = () => {
     switch (petState) {
@@ -39,24 +41,24 @@ export function VirtualPet({ className }: { className?: string }) {
         'items-center bg-purple-50 p-6 rounded-[32px] shadow-sm relative overflow-hidden',
         className,
       )}>
-      {/* Decorative background blobs (Substituto para blur/gradients) */}
       <View className='absolute -top-10 -right-10 w-32 h-32 bg-pink-200/40 rounded-full' />
       <View className='absolute -bottom-10 -left-10 w-32 h-32 bg-purple-200/40 rounded-full' />
 
       <View className='flex-row w-full justify-between items-center mb-4 z-10'>
-        <View className='bg-white/80 px-3 py-1 rounded-full flex-row items-center'>
-          <Text className='text-amber-500 mr-1'>🔥</Text>
+        <View className='bg-white/80 px-3 py-1 rounded-full flex-row items-center gap-1.5'>
+          <HugeiconsIcon icon={Fire02Icon} size={20} color='#F59E0B' />
           <Text className='text-sm font-bold text-purple-600'>
             {streak} Dias
           </Text>
         </View>
-        <View className='bg-white/80 px-3 py-1 rounded-full'>
+        <View className='bg-white/80 px-3 py-1 rounded-full flex-row items-center gap-1.5'>
+          <HugeiconsIcon icon={Rocket02Icon} size={20} color='#9D75CB' />
           <Text className='text-sm font-bold text-purple-600'>Nvl {level}</Text>
         </View>
       </View>
 
       <MotiView
-        className='my-4 z-10'
+        className='my-4 z-10 items-center justify-center'
         animate={getPetAnimation()}
         transition={{
           loop: true,
@@ -65,7 +67,11 @@ export function VirtualPet({ className }: { className?: string }) {
         }}
         accessibilityRole='image'
         accessibilityLabel={`Pet ${petName} is ${petState}`}>
-        <Text className='text-7xl'>{getPetEmoji()}</Text>
+        <Image
+          source={getPetImage(petState)}
+          className='w-40 h-40'
+          resizeMode='contain'
+        />
       </MotiView>
 
       <Text className='font-bold text-xl text-neutral-900 mt-2 z-10'>

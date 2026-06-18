@@ -1,4 +1,4 @@
-import { PillIcon, PlusSignCircleIcon } from '@hugeicons/core-free-icons'
+import { PillBottleIcon, PlusSignCircleIcon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react-native'
 import { useRouter } from 'expo-router'
 import { MotiView } from 'moti'
@@ -27,7 +27,7 @@ export function EmptyState({
       transition={{ type: 'timing', duration: 300 }}>
       <View className='bg-purple-100 p-5 rounded-full mb-3'>
         <HugeiconsIcon
-          icon={PillIcon}
+          icon={PillBottleIcon}
           size={28}
           color='#7C3AED'
           style={{ opacity: 0.6 }}

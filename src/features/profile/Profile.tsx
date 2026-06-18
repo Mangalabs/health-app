@@ -2,13 +2,13 @@ import {
   ArrowRight01Icon,
   Cancel01Icon,
   CheckmarkCircle02Icon,
-  Delete02Icon,
-  Download01Icon,
-  DropletsIcon,
-  HeartIcon,
-  Logout01Icon,
+  Delete03Icon,
+  Download04Icon,
+  GlassWaterIcon,
+  HeartHandshakeIcon,
+  Logout03Icon,
   PencilEdit02Icon,
-  PillIcon,
+  PillBottleIcon,
   SecurityCheckIcon,
 } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react-native'
@@ -157,7 +157,11 @@ export function Profile() {
                 <Text className='text-muted-foreground text-[14px]'>
                   Cuidando bem de você
                 </Text>
-                <HugeiconsIcon icon={HeartIcon} size={14} color='#9D75CB' />
+                <HugeiconsIcon
+                  icon={HeartHandshakeIcon}
+                  size={20}
+                  color='#9D75CB'
+                />
               </View>
             </View>
           </MotiView>
@@ -170,7 +174,7 @@ export function Profile() {
               <View className='flex-row items-center gap-3 px-4 py-4 border-b border-border bg-white'>
                 <View className='p-2.5 rounded-2xl bg-brand-lilac/20'>
                   <HugeiconsIcon
-                    icon={DropletsIcon}
+                    icon={GlassWaterIcon}
                     size={20}
                     color='#9D75CB'
                   />
@@ -233,7 +237,11 @@ export function Profile() {
                 onPress={() => router.push('/medications/list' as Href)}
                 className='flex-row items-center gap-3 w-full px-4 py-4 bg-white active:bg-surface-secondary'>
                 <View className='p-2.5 rounded-2xl bg-feedback-success-light'>
-                  <HugeiconsIcon icon={PillIcon} size={20} color='#10B981' />
+                  <HugeiconsIcon
+                    icon={PillBottleIcon}
+                    size={20}
+                    color='#10B981'
+                  />
                 </View>
                 <Text className='flex-1 font-bold text-foreground text-[15px]'>
                   Gerenciar Medicamentos
@@ -278,7 +286,7 @@ export function Profile() {
                 className='flex-row items-center gap-3 w-full px-4 py-4 border-b border-border bg-white active:bg-surface-secondary'>
                 <View className='p-2.5 rounded-2xl bg-feedback-success-light'>
                   <HugeiconsIcon
-                    icon={Download01Icon}
+                    icon={Download04Icon}
                     size={20}
                     color='#10B981'
                   />
@@ -297,7 +305,7 @@ export function Profile() {
                 className='flex-row items-center gap-3 w-full px-4 py-4 bg-white active:bg-red-50'>
                 <View className='p-2.5 rounded-2xl bg-red-50'>
                   <HugeiconsIcon
-                    icon={Delete02Icon}
+                    icon={Delete03Icon}
                     size={20}
                     color='#EF4444'
                   />
@@ -321,7 +329,7 @@ export function Profile() {
             className='pb-4'>
             <Button variant='ghost' className='w-full' onPress={handleLogout}>
               <View className='flex-row items-center justify-center gap-2'>
-                <HugeiconsIcon icon={Logout01Icon} size={18} color='#64748B' />
+                <HugeiconsIcon icon={Logout03Icon} size={18} color='#64748B' />
                 <Text className='text-muted-foreground font-bold'>
                   Sair e reiniciar aplicativo
                 </Text>

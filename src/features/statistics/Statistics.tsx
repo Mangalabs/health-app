@@ -3,7 +3,7 @@ import {
   ArrowRight01Icon,
   ChartDownIcon,
   ChartUpIcon,
-  DropletsIcon,
+  GlassWaterIcon,
   MinusSignIcon,
   WeightScaleIcon,
 } from '@hugeicons/core-free-icons'
@@ -309,7 +309,7 @@ export function Statistics() {
                 <View className='flex-row items-center justify-between'>
                   <View className='flex-row items-center gap-2'>
                     <HugeiconsIcon
-                      icon={DropletsIcon}
+                      icon={GlassWaterIcon}
                       size={18}
                       color='#9D75CB'
                     />

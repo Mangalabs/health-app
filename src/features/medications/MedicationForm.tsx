@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { ArrowLeft02Icon, PillIcon } from '@hugeicons/core-free-icons'
+import { ArrowLeft02Icon, PillBottleIcon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react-native'
 import { useLocalSearchParams, useRouter } from 'expo-router'
 import React, { useEffect } from 'react'
@@ -125,7 +125,7 @@ export function MedicationForm() {
 
           <View className='items-center py-4'>
             <View className='bg-brand-lilac/30 p-6 rounded-[32px]'>
-              <HugeiconsIcon icon={PillIcon} size={40} color='#9D75CB' />
+              <HugeiconsIcon icon={PillBottleIcon} size={40} color='#9D75CB' />
             </View>
           </View>
 
