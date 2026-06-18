@@ -1,12 +1,14 @@
-import { useRouter } from 'expo-router'
 import {
-  ChevronLeft,
-  Pencil,
-  Pill,
-  Plus,
-  RefreshCw,
-  Trash2,
-} from 'lucide-react-native'
+  Alert01Icon,
+  ArrowLeft02Icon,
+  CleanIcon,
+  PencilEdit02Icon,
+  PillBottleIcon,
+  PlusSignIcon,
+  RefreshDotIcon,
+} from '@hugeicons/core-free-icons'
+import { HugeiconsIcon } from '@hugeicons/react-native'
+import { useRouter } from 'expo-router'
 import React, { useState } from 'react'
 import { Alert, FlatList, Pressable, Text, View } from 'react-native'
 import Toast from 'react-native-toast-message'
@@ -35,69 +37,94 @@ function MedicationItem({
   const isOutOfStock = med.stockCount === 0
 
   return (
-    <View className='flex-row items-start gap-3 p-4 bg-white rounded-3xl border border-border shadow-sm mb-3'>
-      <View className='bg-brand-lilac/20 p-2.5 rounded-2xl mt-0.5'>
-        <Pill size={18} color='#9D75CB' />
-      </View>
-
-      <View className='flex-1 pr-2'>
-        <View className='flex-row items-center gap-2 flex-wrap'>
-          <Text className='font-bold text-foreground text-[15px]'>
-            {med.name}
-          </Text>
-          <Text className='text-muted-foreground text-[13px]'>
-            ({med.dosage})
-          </Text>
+    <View className='p-4 bg-white rounded-3xl border border-border shadow-sm mb-3'>
+      <View className='flex-row items-start gap-3'>
+        <View className='bg-brand-lilac/20 p-2.5 rounded-2xl mt-0.5'>
+          <HugeiconsIcon icon={PillBottleIcon} size={24} color='#9D75CB' />
         </View>
-        <View className='flex-row items-center gap-2 mt-1.5 flex-wrap'>
-          <View className='bg-surface-secondary px-2 py-0.5 rounded-lg border border-border'>
-            <Text className='text-muted-foreground text-[12px]'>
-              {med.timeOfDay}
+
+        <View className='flex-1'>
+          <View className='flex-row items-center gap-2 flex-wrap'>
+            <Text className='font-bold text-foreground text-[15px]'>
+              {med.name}
+            </Text>
+            <Text className='text-muted-foreground text-[13px]'>
+              ({med.dosage})
             </Text>
           </View>
-          <Text
-            className={cn(
-              'font-medium text-[12px]',
-              isOutOfStock
-                ? 'text-destructive'
-                : isLowStock
-                  ? 'text-feedback-warning'
-                  : 'text-muted-foreground',
-            )}>
-            {isOutOfStock ? '⚠ Sem estoque' : `Estoque: ${med.stockCount}`}
-          </Text>
-        </View>
-      </View>
 
-      <View className='flex-row items-center gap-1'>
-        {isActive ? (
-          <>
-            <Pressable
-              onPress={onEdit}
-              className='w-8 h-8 items-center justify-center rounded-xl bg-neutral-50'>
-              <Pencil size={14} color='#64748B' />
-            </Pressable>
-            <Pressable
-              onPress={onToggle}
-              className='w-8 h-8 items-center justify-center rounded-xl bg-amber-50'>
-              <RefreshCw size={14} color='#F59E0B' />
-            </Pressable>
-            <Pressable
-              onPress={onDelete}
-              className='w-8 h-8 items-center justify-center rounded-xl bg-red-50'>
-              <Trash2 size={14} color='#EF4444' />
-            </Pressable>
-          </>
-        ) : (
-          <Pressable
-            onPress={onToggle}
-            className='flex-row items-center gap-1.5 px-3 h-8 rounded-xl bg-brand-lilac/20'>
-            <RefreshCw size={12} color='#9D75CB' />
-            <Text className='text-brand-purple text-[12px] font-bold'>
-              Reativar
-            </Text>
-          </Pressable>
-        )}
+          <View className='flex-row items-center gap-2 mt-1.5 flex-wrap'>
+            <View className='bg-surface-secondary px-2 py-0.5 rounded-lg border border-border'>
+              <Text className='text-muted-foreground text-[12px]'>
+                {med.timeOfDay}
+              </Text>
+            </View>
+
+            {isOutOfStock ? (
+              <View className='flex-row items-center gap-1'>
+                <HugeiconsIcon icon={Alert01Icon} size={16} color='#EF4444' />
+                <Text className='font-medium text-[12px] text-destructive'>
+                  Sem estoque
+                </Text>
+              </View>
+            ) : (
+              <Text
+                className={cn(
+                  'font-medium text-[12px]',
+                  isLowStock
+                    ? 'text-feedback-warning'
+                    : 'text-muted-foreground',
+                )}>
+                Estoque: {med.stockCount}
+              </Text>
+            )}
+          </View>
+
+          {isActive ? (
+            <View className='flex-row items-center gap-2 mt-4'>
+              <Pressable
+                onPress={onEdit}
+                className='flex-1 h-10 flex-row items-center justify-center rounded-xl bg-neutral-500/20'>
+                <HugeiconsIcon
+                  icon={PencilEdit02Icon}
+                  size={20}
+                  color='#64748B'
+                />
+              </Pressable>
+
+              <Pressable
+                onPress={onToggle}
+                className='flex-1 h-10 flex-row items-center justify-center rounded-xl bg-amber-500/20'>
+                <HugeiconsIcon
+                  icon={RefreshDotIcon}
+                  size={20}
+                  color='#F59E0B'
+                />
+              </Pressable>
+
+              <Pressable
+                onPress={onDelete}
+                className='flex-1 h-10 flex-row items-center justify-center rounded-xl bg-red-500/20'>
+                <HugeiconsIcon icon={CleanIcon} size={20} color='#EF4444' />
+              </Pressable>
+            </View>
+          ) : (
+            <View className='mt-4'>
+              <Pressable
+                onPress={onToggle}
+                className='h-10 flex-row items-center justify-center gap-2 rounded-xl bg-brand-lilac/20'>
+                <HugeiconsIcon
+                  icon={RefreshDotIcon}
+                  size={20}
+                  color='#9D75CB'
+                />
+                <Text className='text-brand-purple text-[12px] font-bold'>
+                  Reativar
+                </Text>
+              </Pressable>
+            </View>
+          )}
+        </View>
       </View>
     </View>
   )
@@ -147,7 +174,6 @@ export function MedicationsList() {
     Toast.show({ type: 'success', text1: `${name} reativado!` })
   }
 
-  // Separamos o Header da FlatList para rolar junto com a tela
   const renderHeader = () => (
     <View className='space-y-5 mb-4'>
       <View className='flex-row items-center justify-between mb-2'>
@@ -155,7 +181,7 @@ export function MedicationsList() {
           <Pressable
             onPress={() => router.back()}
             className='w-10 h-10 items-center justify-center rounded-2xl bg-surface-secondary'>
-            <ChevronLeft size={20} color='#64748B' />
+            <HugeiconsIcon icon={ArrowLeft02Icon} size={20} color='#64748B' />
           </Pressable>
           <View>
             <Typography variant='h2'>Medicamentos</Typography>
@@ -168,7 +194,7 @@ export function MedicationsList() {
           size='icon'
           className='w-10 h-10 rounded-2xl'
           onPress={() => router.push('/new-medication')}>
-          <Plus size={18} color='#FFFFFF' />
+          <HugeiconsIcon icon={PlusSignIcon} size={18} color='#FFFFFF' />
         </Button>
       </View>
 
@@ -200,7 +226,12 @@ export function MedicationsList() {
   const renderEmpty = () => (
     <View className='items-center py-12 gap-3'>
       <View className='bg-brand-lilac/20 p-5 rounded-full mb-2'>
-        <Pill size={32} color='#9D75CB' style={{ opacity: 0.5 }} />
+        <HugeiconsIcon
+          icon={PillBottleIcon}
+          size={32}
+          color='#9D75CB'
+          style={{ opacity: 0.5 }}
+        />
       </View>
       <Text className='text-muted-foreground text-center text-[15px] mb-2'>
         {tab === 'active'

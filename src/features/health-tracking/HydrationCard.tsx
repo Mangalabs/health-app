@@ -1,5 +1,6 @@
+import { GlassWaterIcon } from '@hugeicons/core-free-icons'
+import { HugeiconsIcon } from '@hugeicons/react-native'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { Droplet } from 'lucide-react-native'
 import React from 'react'
 import { Text, View } from 'react-native'
 import { healthApi } from '../../core/services/api'
@@ -38,19 +39,17 @@ export function HydrationCard({
     <Card>
       <CardHeader className='pb-2'>
         <View className='flex-row items-center gap-2'>
-          <Droplet size={20} color='#9D75CB' />
+          <HugeiconsIcon icon={GlassWaterIcon} size={30} color='#9D75CB' />
           <CardTitle className='text-brand-purple'>Hidratação</CardTitle>
         </View>
         <CardDescription>Meta: {goal}ml / dia</CardDescription>
       </CardHeader>
       <CardContent className='flex-col items-center gap-4'>
-        {/* Tamanho 120 é mais seguro em telas mobile do que 140 */}
         <ProgressRing progress={progress} size={120} color='#9D75CB'>
           <Text className='text-2xl font-bold text-foreground'>{current}</Text>
           <Text className='text-xs text-muted-foreground'>ml</Text>
         </ProgressRing>
 
-        {/* flex-wrap garante que não quebre a UI em telas fininhas como iPhone SE */}
         <View className='flex-row flex-wrap justify-center gap-2 w-full mt-2'>
           <Button
             variant='secondary'

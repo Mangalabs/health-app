@@ -1,17 +1,18 @@
-import { Href, useRouter } from 'expo-router'
 import {
-  Check,
-  ChevronRight,
-  Download,
-  Droplets,
-  Heart,
-  LogOut,
-  Pencil,
-  Pill,
-  Shield,
-  Trash2,
-  X,
-} from 'lucide-react-native'
+  ArrowRight01Icon,
+  Cancel01Icon,
+  CheckmarkCircle02Icon,
+  Delete02Icon,
+  Download01Icon,
+  DropletsIcon,
+  HeartIcon,
+  Logout01Icon,
+  PencilEdit02Icon,
+  PillIcon,
+  SecurityCheckIcon,
+} from '@hugeicons/core-free-icons'
+import { HugeiconsIcon } from '@hugeicons/react-native'
+import { Href, useRouter } from 'expo-router'
 import { MotiView } from 'moti'
 import React, { useState } from 'react'
 import {
@@ -140,7 +141,6 @@ export function Profile() {
         contentContainerStyle={{ paddingBottom: 112 }}
         showsVerticalScrollIndicator={false}>
         <View className='w-full max-w-[448px] self-center px-4 pt-10 space-y-6'>
-          {/* Avatar + name */}
           <MotiView
             className='flex-col items-center gap-3 py-6'
             from={{ opacity: 0, translateY: 16 }}
@@ -157,21 +157,23 @@ export function Profile() {
                 <Text className='text-muted-foreground text-[14px]'>
                   Cuidando bem de você
                 </Text>
-                <Heart size={14} color='#9D75CB' fill='#9D75CB' />
+                <HugeiconsIcon icon={HeartIcon} size={14} color='#9D75CB' />
               </View>
             </View>
           </MotiView>
 
-          {/* Settings */}
           <MotiView
             from={{ opacity: 0, translateY: 16 }}
             animate={{ opacity: 1, translateY: 0 }}
             transition={{ type: 'timing', duration: 400, delay: 100 }}>
             <Section title='Configurações de Saúde'>
-              {/* Water goal row */}
               <View className='flex-row items-center gap-3 px-4 py-4 border-b border-border bg-white'>
                 <View className='p-2.5 rounded-2xl bg-brand-lilac/20'>
-                  <Droplets size={20} color='#9D75CB' />
+                  <HugeiconsIcon
+                    icon={DropletsIcon}
+                    size={20}
+                    color='#9D75CB'
+                  />
                 </View>
                 <View className='flex-1'>
                   <Text className='font-bold text-foreground text-[15px]'>
@@ -192,12 +194,20 @@ export function Profile() {
                       <Pressable
                         onPress={handleSaveGoal}
                         className='w-9 h-9 items-center justify-center rounded-xl bg-feedback-success ml-1'>
-                        <Check size={16} color='#FFFFFF' />
+                        <HugeiconsIcon
+                          icon={CheckmarkCircle02Icon}
+                          size={16}
+                          color='#FFFFFF'
+                        />
                       </Pressable>
                       <Pressable
                         onPress={handleCancelGoal}
                         className='w-9 h-9 items-center justify-center rounded-xl bg-muted'>
-                        <X size={16} color='#64748B' />
+                        <HugeiconsIcon
+                          icon={Cancel01Icon}
+                          size={16}
+                          color='#64748B'
+                        />
                       </Pressable>
                     </View>
                   ) : (
@@ -210,27 +220,33 @@ export function Profile() {
                   <Pressable
                     onPress={() => setEditingGoal(true)}
                     className='w-10 h-10 items-center justify-center rounded-xl bg-neutral-50'>
-                    <Pencil size={18} color='#64748B' />
+                    <HugeiconsIcon
+                      icon={PencilEdit02Icon}
+                      size={18}
+                      color='#64748B'
+                    />
                   </Pressable>
                 )}
               </View>
 
-              {/* Medications link */}
               <Pressable
                 onPress={() => router.push('/medications/list' as Href)}
                 className='flex-row items-center gap-3 w-full px-4 py-4 bg-white active:bg-surface-secondary'>
                 <View className='p-2.5 rounded-2xl bg-feedback-success-light'>
-                  <Pill size={20} color='#10B981' />
+                  <HugeiconsIcon icon={PillIcon} size={20} color='#10B981' />
                 </View>
                 <Text className='flex-1 font-bold text-foreground text-[15px]'>
                   Gerenciar Medicamentos
                 </Text>
-                <ChevronRight size={20} color='#64748B' />
+                <HugeiconsIcon
+                  icon={ArrowRight01Icon}
+                  size={20}
+                  color='#64748B'
+                />
               </Pressable>
             </Section>
           </MotiView>
 
-          {/* LGPD / Privacy */}
           <MotiView
             from={{ opacity: 0, translateY: 16 }}
             animate={{ opacity: 1, translateY: 0 }}
@@ -239,7 +255,11 @@ export function Profile() {
               <View className='px-4 py-4 border-b border-border bg-white'>
                 <View className='flex-row items-start gap-3'>
                   <View className='p-2.5 rounded-2xl bg-brand-lilac/20 mt-0.5'>
-                    <Shield size={20} color='#9D75CB' />
+                    <HugeiconsIcon
+                      icon={SecurityCheckIcon}
+                      size={20}
+                      color='#9D75CB'
+                    />
                   </View>
                   <View className='flex-1 pr-2'>
                     <Text className='font-bold text-foreground text-[15px]'>
@@ -257,28 +277,43 @@ export function Profile() {
                 onPress={handleExportData}
                 className='flex-row items-center gap-3 w-full px-4 py-4 border-b border-border bg-white active:bg-surface-secondary'>
                 <View className='p-2.5 rounded-2xl bg-feedback-success-light'>
-                  <Download size={20} color='#10B981' />
+                  <HugeiconsIcon
+                    icon={Download01Icon}
+                    size={20}
+                    color='#10B981'
+                  />
                 </View>
                 <Text className='flex-1 font-bold text-foreground text-[15px]'>
                   Exportar meus dados
                 </Text>
-                <ChevronRight size={20} color='#64748B' />
+                <HugeiconsIcon
+                  icon={ArrowRight01Icon}
+                  size={20}
+                  color='#64748B'
+                />
               </Pressable>
               <Pressable
                 onPress={handleDeleteAccount}
                 className='flex-row items-center gap-3 w-full px-4 py-4 bg-white active:bg-red-50'>
                 <View className='p-2.5 rounded-2xl bg-red-50'>
-                  <Trash2 size={20} color='#EF4444' />
+                  <HugeiconsIcon
+                    icon={Delete02Icon}
+                    size={20}
+                    color='#EF4444'
+                  />
                 </View>
                 <Text className='flex-1 font-bold text-destructive text-[15px]'>
                   Excluir minha conta
                 </Text>
-                <ChevronRight size={20} color='#EF4444' />
+                <HugeiconsIcon
+                  icon={ArrowRight01Icon}
+                  size={20}
+                  color='#EF4444'
+                />
               </Pressable>
             </Section>
           </MotiView>
 
-          {/* Logout */}
           <MotiView
             from={{ opacity: 0, translateY: 16 }}
             animate={{ opacity: 1, translateY: 0 }}
@@ -286,7 +321,7 @@ export function Profile() {
             className='pb-4'>
             <Button variant='ghost' className='w-full' onPress={handleLogout}>
               <View className='flex-row items-center justify-center gap-2'>
-                <LogOut size={18} color='#64748B' />
+                <HugeiconsIcon icon={Logout01Icon} size={18} color='#64748B' />
                 <Text className='text-muted-foreground font-bold'>
                   Sair e reiniciar aplicativo
                 </Text>

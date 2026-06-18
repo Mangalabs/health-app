@@ -1,5 +1,6 @@
+import { PillIcon, PlusSignCircleIcon } from '@hugeicons/core-free-icons'
+import { HugeiconsIcon } from '@hugeicons/react-native'
 import { useRouter } from 'expo-router'
-import { Pill, PlusCircle } from 'lucide-react-native'
 import { MotiView } from 'moti'
 import React from 'react'
 import { Text, View } from 'react-native'
@@ -25,7 +26,12 @@ export function EmptyState({
       animate={{ opacity: 1, translateY: 0 }}
       transition={{ type: 'timing', duration: 300 }}>
       <View className='bg-purple-100 p-5 rounded-full mb-3'>
-        <Pill size={28} color='#7C3AED' style={{ opacity: 0.6 }} />
+        <HugeiconsIcon
+          icon={PillIcon}
+          size={28}
+          color='#7C3AED'
+          style={{ opacity: 0.6 }}
+        />
       </View>
       <Text
         className='font-bold text-neutral-900 mb-1 text-center'
@@ -44,7 +50,11 @@ export function EmptyState({
           onPress={() => router.push('/new-medication')}
           className='px-4'>
           <View className='flex-row items-center gap-2'>
-            <PlusCircle size={15} color='#7C3AED' />
+            <HugeiconsIcon
+              icon={PlusSignCircleIcon}
+              size={15}
+              color='#7C3AED'
+            />
             <Text className='text-purple-600 font-bold text-sm'>
               Adicionar Medicamento
             </Text>

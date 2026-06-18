@@ -1,15 +1,16 @@
 import { zodResolver } from '@hookform/resolvers/zod'
+import { ArrowLeft02Icon, PillIcon } from '@hugeicons/core-free-icons'
+import { HugeiconsIcon } from '@hugeicons/react-native'
 import { useLocalSearchParams, useRouter } from 'expo-router'
-import { ChevronLeft, Pill } from 'lucide-react-native'
 import React, { useEffect } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import {
-    KeyboardAvoidingView,
-    Platform,
-    Pressable,
-    ScrollView,
-    Text,
-    View,
+  KeyboardAvoidingView,
+  Platform,
+  Pressable,
+  ScrollView,
+  Text,
+  View,
 } from 'react-native'
 import Toast from 'react-native-toast-message'
 import { z } from 'zod'
@@ -18,7 +19,6 @@ import { Input } from '../../design-system/Input'
 import { Typography } from '../../design-system/Typography'
 import { useMedicationsStore } from './store'
 
-// Removido o z.coerce para evitar o erro de 'unknown' no Hook Form
 const medicationSchema = z.object({
   name: z.string().min(2, 'Nome deve ter ao menos 2 caracteres'),
   dosage: z.string().min(1, 'Dosagem é obrigatória'),
@@ -109,7 +109,7 @@ export function MedicationForm() {
             <Pressable
               onPress={() => router.back()}
               className='w-10 h-10 items-center justify-center rounded-2xl bg-surface-secondary'>
-              <ChevronLeft size={20} color='#64748B' />
+              <HugeiconsIcon icon={ArrowLeft02Icon} size={20} color='#64748B' />
             </Pressable>
             <View>
               <Typography variant='h2'>
@@ -125,7 +125,7 @@ export function MedicationForm() {
 
           <View className='items-center py-4'>
             <View className='bg-brand-lilac/30 p-6 rounded-[32px]'>
-              <Pill size={40} color='#9D75CB' />
+              <HugeiconsIcon icon={PillIcon} size={40} color='#9D75CB' />
             </View>
           </View>
 

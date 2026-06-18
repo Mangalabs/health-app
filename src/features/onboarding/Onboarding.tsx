@@ -1,14 +1,15 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Leaf } from 'lucide-react-native'
+import { Leaf01Icon } from '@hugeicons/core-free-icons'
+import { HugeiconsIcon } from '@hugeicons/react-native'
 import { AnimatePresence, MotiView } from 'moti'
 import React from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import {
-    KeyboardAvoidingView,
-    Platform,
-    ScrollView,
-    Text,
-    View,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  Text,
+  View,
 } from 'react-native'
 import { z } from 'zod'
 import { Button } from '../../design-system/Button'
@@ -59,7 +60,7 @@ export function Onboarding() {
             <View
               className='w-16 h-16 bg-brand-purple rounded-3xl items-center justify-center shadow-sm'
               style={{ transform: [{ rotate: '12deg' }] }}>
-              <Leaf size={32} color='#FFFFFF' />
+              <HugeiconsIcon icon={Leaf01Icon} size={32} color='#FFFFFF' />
             </View>
           </View>
 

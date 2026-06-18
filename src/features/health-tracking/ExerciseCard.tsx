@@ -1,11 +1,12 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query'
 import {
-  Coffee,
-  Dumbbell,
-  Flame,
-  Moon,
-  Zap
-} from 'lucide-react-native'
+  BodyPartMuscleIcon,
+  Coffee01Icon,
+  Dumbbell02Icon,
+  FlameIcon,
+  ZzzIcon,
+} from '@hugeicons/core-free-icons'
+import { HugeiconsIcon } from '@hugeicons/react-native'
+import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { AnimatePresence, MotiView } from 'moti'
 import React from 'react'
 import { Text, View } from 'react-native'
@@ -42,7 +43,7 @@ export function ExerciseCard({ completed }: { completed: boolean | null }) {
     <Card>
       <CardHeader className='pb-2'>
         <View className='flex-row items-center gap-2'>
-          <Dumbbell size={20} color='#FF8BA7' />
+          <HugeiconsIcon icon={Dumbbell02Icon} size={20} color='#FF8BA7' />
           <CardTitle className='text-brand-pink'>Movimento</CardTitle>
         </View>
         <CardDescription>
@@ -67,7 +68,7 @@ export function ExerciseCard({ completed }: { completed: boolean | null }) {
                 disabled={mutation.isPending}
                 accessibilityLabel='Hoje foi meu dia de descanso'>
                 <View className='flex-row items-center justify-center gap-2'>
-                  <Moon size={18} color='#9D75CB' />
+                  <HugeiconsIcon icon={ZzzIcon} size={18} color='#9D75CB' />
                   <Text className='text-brand-purple font-bold text-[15px]'>
                     Dia Off
                   </Text>
@@ -82,7 +83,11 @@ export function ExerciseCard({ completed }: { completed: boolean | null }) {
                 disabled={mutation.isPending}
                 accessibilityLabel='Sim, me exercitei hoje'>
                 <View className='flex-row items-center justify-center gap-2'>
-                  <Zap size={18} color='#FFFFFF' />
+                  <HugeiconsIcon
+                    icon={BodyPartMuscleIcon}
+                    size={18}
+                    color='#FFFFFF'
+                  />
                   <Text className='text-white font-bold text-[15px]'>
                     Treinei!
                   </Text>
@@ -98,7 +103,7 @@ export function ExerciseCard({ completed }: { completed: boolean | null }) {
               {completed ? (
                 <>
                   <View className='bg-brand-pink/20 p-3.5 rounded-2xl mb-3 shadow-sm'>
-                    <Flame size={24} color='#FF8BA7' />
+                    <HugeiconsIcon icon={FlameIcon} size={24} color='#FF8BA7' />
                   </View>
                   <Text
                     className='font-bold text-foreground text-center'
@@ -114,7 +119,11 @@ export function ExerciseCard({ completed }: { completed: boolean | null }) {
               ) : (
                 <>
                   <View className='bg-brand-lilac/20 p-3.5 rounded-2xl mb-3'>
-                    <Coffee size={24} color='#9D75CB' />
+                    <HugeiconsIcon
+                      icon={Coffee01Icon}
+                      size={24}
+                      color='#9D75CB'
+                    />
                   </View>
                   <Text
                     className='font-bold text-foreground text-center'

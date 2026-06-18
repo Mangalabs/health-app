@@ -1,12 +1,13 @@
 import {
-    Activity,
-    Flame,
-    Leaf,
-    Sparkles,
-    Star,
-    Trophy,
-    Zap,
-} from 'lucide-react-native'
+  Activity01Icon,
+  ChampionIcon,
+  FlameIcon,
+  Leaf01Icon,
+  SparklesIcon,
+  StarIcon,
+  ZapIcon,
+} from '@hugeicons/core-free-icons'
+import { HugeiconsIcon } from '@hugeicons/react-native'
 import { MotiView } from 'moti'
 import React from 'react'
 import { ScrollView, Text, View } from 'react-native'
@@ -17,25 +18,29 @@ import { useGamificationStore } from '../gamification/store'
 const LEVEL_MESSAGES = [
   {
     text: 'Você está começando sua jornada! Cada passo conta.',
-    Icon: Leaf,
+    Icon: Leaf01Icon,
     color: '#10B981',
   },
   {
     text: 'Ótimo começo! Você está criando hábitos incríveis!',
-    Icon: Sparkles,
+    Icon: SparklesIcon,
     color: '#F59E0B',
   },
   {
     text: 'Incrível! Seus hábitos estão ficando mais fortes!',
-    Icon: Activity,
+    Icon: Activity01Icon,
     color: '#9D75CB',
   },
   {
     text: 'Você é uma inspiração! Continue assim!',
-    Icon: Star,
+    Icon: StarIcon,
     color: '#FF8BA7',
   },
-  { text: 'Mestre dos hábitos! Nada te para!', Icon: Trophy, color: '#F59E0B' },
+  {
+    text: 'Mestre dos hábitos! Nada te para!',
+    Icon: ChampionIcon,
+    color: '#F59E0B',
+  },
 ]
 
 function getLevelContent(level: number) {
@@ -43,7 +48,7 @@ function getLevelContent(level: number) {
   return (
     LEVEL_MESSAGES[index] || {
       text: `Nível ${level}! Você é lendário!`,
-      Icon: Flame,
+      Icon: FlameIcon,
       color: '#EF4444',
     }
   )
@@ -127,7 +132,7 @@ export function PetPage() {
             transition={{ type: 'timing', duration: 400 }}>
             <View className='flex-row w-full justify-between items-center mb-4 z-10'>
               <View className='bg-white/80 px-3 py-1.5 rounded-full flex-row items-center gap-1.5'>
-                <Flame size={14} color='#F59E0B' />
+                <HugeiconsIcon icon={FlameIcon} size={14} color='#F59E0B' />
                 <Text
                   className='font-bold text-brand-purple'
                   style={{ fontSize: 13 }}>
@@ -135,7 +140,7 @@ export function PetPage() {
                 </Text>
               </View>
               <View className='bg-white/80 px-3 py-1.5 rounded-full flex-row items-center gap-1.5'>
-                <Star size={14} color='#9D75CB' fill='#9D75CB' />
+                <HugeiconsIcon icon={StarIcon} size={14} color='#9D75CB' />
                 <Text
                   className='font-bold text-brand-purple'
                   style={{ fontSize: 13 }}>
@@ -159,7 +164,7 @@ export function PetPage() {
               {petName}
             </Text>
             <View className='flex-row items-center justify-center gap-1.5 mt-2 z-10 max-w-[240px]'>
-              <LevelIcon size={14} color={levelColor} />
+              <HugeiconsIcon icon={LevelIcon} size={14} color={levelColor} />
               <Text
                 className='text-muted-foreground text-center'
                 style={{ fontSize: 13 }}>
@@ -197,25 +202,29 @@ export function PetPage() {
             animate={{ opacity: 1, translateY: 0 }}
             transition={{ type: 'timing', duration: 400, delay: 100 }}>
             <StatCard
-              icon={<Zap size={20} color='#9D75CB' />}
+              icon={<HugeiconsIcon icon={ZapIcon} size={20} color='#9D75CB' />}
               label='XP Total'
               value={totalXp}
               bgColorClass='bg-brand-lilac/30'
             />
             <StatCard
-              icon={<Star size={20} color='#FF8BA7' />}
+              icon={<HugeiconsIcon icon={StarIcon} size={20} color='#FF8BA7' />}
               label='Nível Atual'
               value={level}
               bgColorClass='bg-brand-pink-light/30'
             />
             <StatCard
-              icon={<Flame size={20} color='#F59E0B' />}
+              icon={
+                <HugeiconsIcon icon={FlameIcon} size={20} color='#F59E0B' />
+              }
               label='Sequência Atual'
               value={`${streak} dias`}
               bgColorClass='bg-amber-50'
             />
             <StatCard
-              icon={<Trophy size={20} color='#10B981' />}
+              icon={
+                <HugeiconsIcon icon={ChampionIcon} size={20} color='#10B981' />
+              }
               label='Maior Sequência'
               value={`${maxStreak} dias`}
               bgColorClass='bg-feedback-success-light'

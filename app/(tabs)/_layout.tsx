@@ -1,17 +1,23 @@
+import {
+  Activity04Icon,
+  CatIcon,
+  Female02Icon,
+  Home12Icon,
+} from '@hugeicons/core-free-icons'
+import { HugeiconsIcon } from '@hugeicons/react-native'
 import { BottomTabBarProps } from '@react-navigation/bottom-tabs'
 import { Tabs } from 'expo-router'
-import { BarChart2, Cat, Home, User } from 'lucide-react-native'
 import { MotiView } from 'moti'
 import React from 'react'
 import { Pressable, Text, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { cn } from '../../src/utils/formatters'
 
-const TAB_ICONS: Record<string, React.ElementType> = {
-  index: Home,
-  statistics: BarChart2,
-  pet: Cat,
-  profile: User,
+const TAB_ICONS: Record<string, any> = {
+  index: Home12Icon,
+  statistics: Activity04Icon,
+  pet: CatIcon,
+  profile: Female02Icon,
 }
 
 function CustomTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
@@ -64,7 +70,8 @@ function CustomTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
                     'p-2 rounded-2xl transition-colors',
                     isFocused ? 'bg-brand-lilac/40' : 'bg-transparent',
                   )}>
-                  <Icon
+                  <HugeiconsIcon
+                    icon={Icon}
                     size={22}
                     color={isFocused ? '#9D75CB' : '#64748B'}
                     strokeWidth={isFocused ? 2.5 : 2}

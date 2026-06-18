@@ -1,11 +1,12 @@
-import { Href, useRouter } from 'expo-router'
 import {
-  CheckCircle,
-  Clock,
-  MoreVertical,
-  Pill,
-  SkipForward,
-} from 'lucide-react-native'
+  CheckmarkSquare03Icon,
+  ClockAlertIcon,
+  Forward01Icon,
+  MoreVerticalCircle01Icon,
+  PillBottleIcon,
+} from '@hugeicons/core-free-icons'
+import { HugeiconsIcon } from '@hugeicons/react-native'
+import { Href, useRouter } from 'expo-router'
 import { AnimatePresence, MotiView } from 'moti'
 import React, { useState } from 'react'
 import { Pressable, Text, View } from 'react-native'
@@ -64,7 +65,12 @@ export function MedicationsCard() {
       <CardHeader className='pb-2'>
         <View className='flex-row items-start justify-between gap-2'>
           <View className='flex-row items-center gap-2 flex-1 pr-2'>
-            <Pill size={20} color='#10B981' className='mt-0.5' />
+            <HugeiconsIcon
+              icon={PillBottleIcon}
+              size={30}
+              color='#10B981'
+              style={{ marginTop: 2 }}
+            />
             <View className='flex-1'>
               <CardTitle
                 className='text-green-500'
@@ -110,7 +116,6 @@ export function MedicationsCard() {
                       'flex-row items-center justify-between p-3 rounded-2xl border border-border bg-surface-secondary',
                       isDone && 'opacity-50',
                     )}>
-                    {/* flex-shrink-1 garante que o texto amasse, mas o botão fique intacto */}
                     <View className='flex-col flex-1 flex-shrink-1 mr-3'>
                       <View className='flex-row items-center flex-wrap gap-x-2 gap-y-1 mb-1.5'>
                         <Text
@@ -174,20 +179,28 @@ export function MedicationsCard() {
                           className='w-10 h-10 items-center justify-center rounded-xl'
                           accessibilityRole='button'
                           accessibilityLabel='Mais opções do medicamento'>
-                          <MoreVertical size={18} color='#64748B' />
+                          <HugeiconsIcon
+                            icon={MoreVerticalCircle01Icon}
+                            size={28}
+                            color='#64748B'
+                          />
                         </Pressable>
 
                         <Button
                           size='icon'
                           variant='success'
                           className={cn(
-                            'rounded-xl w-11 h-11',
+                            'rounded-lg w-11 h-11',
                             isOutOfStock && 'opacity-50',
                           )}
                           onPress={() => !isOutOfStock && handleTake(med.id)}
                           disabled={isOutOfStock}
                           accessibilityLabel={`Tomar ${med.name}`}>
-                          <CheckCircle size={20} color='#FFFFFF' />
+                          <HugeiconsIcon
+                            icon={CheckmarkSquare03Icon}
+                            size={24}
+                            color='white'
+                          />
                         </Button>
                       </View>
                     )}
@@ -199,11 +212,15 @@ export function MedicationsCard() {
                         from={{ opacity: 0, height: 0, translateY: -10 }}
                         animate={{ opacity: 1, height: 80, translateY: 0 }}
                         exit={{ opacity: 0, height: 0, translateY: -10 }}
-                        className='overflow-hidden bg-white border border-border rounded-b-2xl -mt-2 pt-2 z-0 shadow-sm'>
+                        className='overflow-hidden bg-white border border-border rounded-b-2xl -mt-2  z-0 shadow-sm'>
                         <Pressable
                           onPress={() => handleSkip(med.id)}
                           className='flex-row items-center gap-2 px-4 py-2 border-b border-border'>
-                          <SkipForward size={14} color='#64748B' />
+                          <HugeiconsIcon
+                            icon={Forward01Icon}
+                            size={14}
+                            color='#64748B'
+                          />
                           <Text
                             className='text-muted-foreground'
                             style={{ fontSize: 14 }}>
@@ -213,7 +230,11 @@ export function MedicationsCard() {
                         <Pressable
                           onPress={() => handleLate(med.id)}
                           className='flex-row items-center gap-2 px-4 py-2'>
-                          <Clock size={14} color='#D97706' />
+                          <HugeiconsIcon
+                            icon={ClockAlertIcon}
+                            size={14}
+                            color='#D97706'
+                          />
                           <Text
                             className='text-amber-600'
                             style={{ fontSize: 14 }}>

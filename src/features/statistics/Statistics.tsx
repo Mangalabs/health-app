@@ -1,13 +1,14 @@
-import { useQuery } from '@tanstack/react-query'
 import {
-    ChevronLeft,
-    ChevronRight,
-    Droplets,
-    Minus,
-    Scale,
-    TrendingDown,
-    TrendingUp,
-} from 'lucide-react-native'
+  ArrowLeft02Icon,
+  ArrowRight01Icon,
+  ChartDownIcon,
+  ChartUpIcon,
+  DropletsIcon,
+  MinusSignIcon,
+  WeightScaleIcon,
+} from '@hugeicons/core-free-icons'
+import { HugeiconsIcon } from '@hugeicons/react-native'
+import { useQuery } from '@tanstack/react-query'
 import { MotiView } from 'moti'
 import React, { useMemo, useState } from 'react'
 import { Pressable, ScrollView, Text, View } from 'react-native'
@@ -15,10 +16,10 @@ import { LineChart } from 'react-native-gifted-charts'
 import { MedicationLog } from '../../core/models/types'
 import { healthApi } from '../../core/services/api'
 import {
-    Card,
-    CardContent,
-    CardHeader,
-    CardTitle,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
 } from '../../design-system/Card'
 import { Typography } from '../../design-system/Typography'
 import { cn } from '../../utils/formatters'
@@ -183,7 +184,6 @@ export function Statistics() {
             </Typography>
           </View>
 
-          {/* Medication Calendar */}
           <MotiView
             from={{ opacity: 0, translateY: 16 }}
             animate={{ opacity: 1, translateY: 0 }}
@@ -201,7 +201,11 @@ export function Statistics() {
                     <Pressable
                       onPress={prevMonth}
                       className='w-8 h-8 items-center justify-center rounded-xl bg-surface-secondary'>
-                      <ChevronLeft size={16} color='#64748B' />
+                      <HugeiconsIcon
+                        icon={ArrowLeft02Icon}
+                        size={16}
+                        color='#64748B'
+                      />
                     </Pressable>
                     <Text
                       className='font-bold text-foreground text-center'
@@ -211,7 +215,11 @@ export function Statistics() {
                     <Pressable
                       onPress={nextMonth}
                       className='w-8 h-8 items-center justify-center rounded-xl bg-surface-secondary'>
-                      <ChevronRight size={16} color='#64748B' />
+                      <HugeiconsIcon
+                        icon={ArrowRight01Icon}
+                        size={16}
+                        color='#64748B'
+                      />
                     </Pressable>
                   </View>
                 </View>
@@ -292,7 +300,6 @@ export function Statistics() {
             </Card>
           </MotiView>
 
-          {/* Hydration Chart */}
           <MotiView
             from={{ opacity: 0, translateY: 16 }}
             animate={{ opacity: 1, translateY: 0 }}
@@ -301,7 +308,11 @@ export function Statistics() {
               <CardHeader className='pb-2'>
                 <View className='flex-row items-center justify-between'>
                   <View className='flex-row items-center gap-2'>
-                    <Droplets size={18} color='#9D75CB' />
+                    <HugeiconsIcon
+                      icon={DropletsIcon}
+                      size={18}
+                      color='#9D75CB'
+                    />
                     <CardTitle className='text-brand-purple'>
                       Hidratação
                     </CardTitle>
@@ -338,7 +349,6 @@ export function Statistics() {
             </Card>
           </MotiView>
 
-          {/* Weight Chart */}
           <MotiView
             from={{ opacity: 0, translateY: 16 }}
             animate={{ opacity: 1, translateY: 0 }}
@@ -347,7 +357,11 @@ export function Statistics() {
               <CardHeader className='pb-2'>
                 <View className='flex-row items-center justify-between'>
                   <View className='flex-row items-center gap-2'>
-                    <Scale size={18} color='#FF8BA7' />
+                    <HugeiconsIcon
+                      icon={WeightScaleIcon}
+                      size={18}
+                      color='#FF8BA7'
+                    />
                     <CardTitle className='text-brand-pink'>
                       Peso Corporal
                     </CardTitle>
@@ -363,11 +377,23 @@ export function Statistics() {
                             : 'bg-muted',
                       )}>
                       {weightTrend < 0 ? (
-                        <TrendingDown size={14} color='#10B981' />
+                        <HugeiconsIcon
+                          icon={ChartDownIcon}
+                          size={14}
+                          color='#10B981'
+                        />
                       ) : weightTrend > 0 ? (
-                        <TrendingUp size={14} color='#EF4444' />
+                        <HugeiconsIcon
+                          icon={ChartUpIcon}
+                          size={14}
+                          color='#EF4444'
+                        />
                       ) : (
-                        <Minus size={14} color='#64748B' />
+                        <HugeiconsIcon
+                          icon={MinusSignIcon}
+                          size={14}
+                          color='#64748B'
+                        />
                       )}
                       <Text
                         className={cn(
