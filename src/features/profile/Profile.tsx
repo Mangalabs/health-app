@@ -12,6 +12,7 @@ import {
   SecurityCheckIcon,
 } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react-native'
+import { LinearGradient } from 'expo-linear-gradient'
 import { Href, useRouter } from 'expo-router'
 import { MotiView } from 'moti'
 import React, { useState } from 'react'
@@ -23,6 +24,7 @@ import {
   TextInput,
   View,
 } from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import Toast from 'react-native-toast-message'
 import { Button } from '../../design-system/Button'
 import { Typography } from '../../design-system/Typography'
@@ -35,19 +37,21 @@ interface SectionProps {
 
 function Section({ title, children }: SectionProps) {
   return (
-    <View className='space-y-2 mb-6'>
+    <View className='mb-6'>
       <Text
-        className='font-bold text-muted-foreground px-2 uppercase tracking-widest'
-        style={{ fontSize: 12 }}>
+        className='font-bold text-muted-foreground/60 px-4 mb-2 uppercase tracking-[2px]'
+        style={{ fontSize: 11 }}>
         {title}
       </Text>
       <View
-        className='bg-white rounded-[24px] border border-border overflow-hidden'
+        className='bg-white rounded-[32px] overflow-hidden'
         style={{
-          shadowColor: '#000',
-          shadowOffset: { width: 0, height: 1 },
-          shadowOpacity: 0.05,
-          shadowRadius: 2,
+          borderWidth: 1,
+          borderColor: 'rgba(157, 117, 203, 0.08)',
+          shadowColor: '#9D75CB',
+          shadowOffset: { width: 0, height: 4 },
+          shadowOpacity: 0.03,
+          shadowRadius: 12,
           elevation: 2,
         }}>
         {children}
@@ -58,6 +62,7 @@ function Section({ title, children }: SectionProps) {
 
 export function Profile() {
   const router = useRouter()
+  const insets = useSafeAreaInsets()
   const { user, setUserData, setWaterGoal } = useGamificationStore()
 
   const [editingGoal, setEditingGoal] = useState(false)
@@ -122,64 +127,77 @@ export function Profile() {
     setUserData({ hasCompletedOnboarding: false })
   }
 
-  const initials = (user.name || 'U')
-    .split(' ')
-    .map((n) => n[0])
-    .slice(0, 2)
-    .join('')
-    .toUpperCase()
+  const initials = (user.name || 'U').substring(0, 2).toUpperCase()
 
   return (
     <View className='flex-1 bg-background'>
-      <View
-        className='absolute top-0 left-0 w-full h-48 bg-brand-pink-light/20'
-        pointerEvents='none'
-      />
-
       <ScrollView
         className='flex-1'
-        contentContainerStyle={{ paddingBottom: 112 }}
+        contentContainerStyle={{
+          paddingHorizontal: 16,
+          paddingTop: Math.max(insets.top + 16, 24),
+          paddingBottom: insets.bottom + 120,
+        }}
         showsVerticalScrollIndicator={false}>
-        <View className='w-full max-w-[448px] self-center px-4 pt-10 space-y-6'>
-          <MotiView
-            className='flex-col items-center gap-3 py-6'
-            from={{ opacity: 0, translateY: 16 }}
-            animate={{ opacity: 1, translateY: 0 }}
-            transition={{ type: 'timing', duration: 400 }}>
-            <View className='w-24 h-24 rounded-full bg-brand-purple items-center justify-center shadow-sm'>
-              <Text className='font-heading font-bold text-white text-3xl'>
-                {initials}
-              </Text>
-            </View>
-            <View className='items-center'>
-              <Typography variant='h2'>{user.name || 'Usuário'}</Typography>
-              <View className='flex-row items-center gap-1 mt-1'>
-                <Text className='text-muted-foreground text-[14px]'>
-                  Cuidando bem de você
+        <MotiView
+          className='mb-8 rounded-[40px] overflow-hidden border-4 border-white'
+          style={{
+            shadowColor: '#FF8BA7',
+            shadowOffset: { width: 0, height: 8 },
+            shadowOpacity: 0.12,
+            shadowRadius: 16,
+            elevation: 4,
+          }}
+          from={{ opacity: 0, scale: 0.9, translateY: 20 }}
+          animate={{ opacity: 1, scale: 1, translateY: 0 }}
+          transition={{ type: 'spring', damping: 16, stiffness: 100 }}>
+          <LinearGradient
+            colors={['#FFF0F3', '#F4EBFF']}
+            start={{ x: 0, y: 0 }}
+            end={{ x: 1, y: 1 }}
+            className='flex-col items-center py-8 px-6'>
+            <View className='w-24 h-24 mb-4 rounded-full bg-white p-1 shadow-sm'>
+              <View className='flex-1 rounded-full bg-brand-purple items-center justify-center'>
+                <Text className='font-bold text-white text-2xl tracking-widest'>
+                  {initials}
                 </Text>
-                <HugeiconsIcon
-                  icon={HeartHandshakeIcon}
-                  size={20}
-                  color='#9D75CB'
-                />
               </View>
             </View>
-          </MotiView>
 
-          <MotiView
-            from={{ opacity: 0, translateY: 16 }}
-            animate={{ opacity: 1, translateY: 0 }}
-            transition={{ type: 'timing', duration: 400, delay: 100 }}>
-            <Section title='Configurações de Saúde'>
-              <View className='flex-row items-center gap-3 px-4 py-4 border-b border-border bg-white'>
-                <View className='p-2.5 rounded-2xl bg-brand-lilac/20'>
+            <Typography
+              variant='h2'
+              className='text-center text-brand-purple mb-3'>
+              {user.name || 'Usuário'}
+            </Typography>
+
+            <View className='flex-row items-center justify-center gap-2 bg-white/70 px-5 py-2.5 rounded-full shadow-sm'>
+              <HugeiconsIcon
+                icon={HeartHandshakeIcon}
+                size={16}
+                color='#FF8BA7'
+              />
+              <Text className='text-brand-purple font-bold text-[13px]'>
+                Cuidando bem de você
+              </Text>
+            </View>
+          </LinearGradient>
+        </MotiView>
+
+        <MotiView
+          from={{ opacity: 0, translateY: 20 }}
+          animate={{ opacity: 1, translateY: 0 }}
+          transition={{ type: 'spring', delay: 100, damping: 18 }}>
+          <Section title='Configurações de Saúde'>
+            <View className='flex-row items-center justify-between px-5 py-4 border-b border-surface-secondary'>
+              <View className='flex-row items-center gap-4 flex-1'>
+                <View className='p-3 rounded-[20px] bg-brand-lilac/10'>
                   <HugeiconsIcon
                     icon={GlassWaterIcon}
-                    size={20}
+                    size={22}
                     color='#9D75CB'
                   />
                 </View>
-                <View className='flex-1'>
+                <View className='flex-1 pr-2'>
                   <Text className='font-bold text-foreground text-[15px]'>
                     Meta Diária de Água
                   </Text>
@@ -189,154 +207,135 @@ export function Profile() {
                         keyboardType='numeric'
                         value={goalInput}
                         onChangeText={setGoalInput}
-                        className='w-20 h-9 border border-border rounded-xl px-2 bg-surface-secondary text-foreground text-[14px]'
                         maxLength={4}
+                        className='w-24 h-12 border border-brand-lilac/30 rounded-xl px-3 py-0 bg-surface-secondary font-bold text-brand-purple text-[15px]'
                       />
-                      <Text className='text-muted-foreground text-[13px]'>
+                      <Text className='text-muted-foreground font-medium text-[13px]'>
                         ml
                       </Text>
                       <Pressable
                         onPress={handleSaveGoal}
-                        className='w-9 h-9 items-center justify-center rounded-xl bg-feedback-success ml-1'>
+                        className='w-12 h-12 items-center justify-center bg-feedback-success rounded-xl ml-1 active:opacity-80'>
                         <HugeiconsIcon
                           icon={CheckmarkCircle02Icon}
-                          size={16}
+                          size={20}
                           color='#FFFFFF'
                         />
                       </Pressable>
                       <Pressable
                         onPress={handleCancelGoal}
-                        className='w-9 h-9 items-center justify-center rounded-xl bg-muted'>
+                        className='w-12 h-12 items-center justify-center bg-surface-secondary rounded-xl active:opacity-80'>
                         <HugeiconsIcon
                           icon={Cancel01Icon}
-                          size={16}
+                          size={20}
                           color='#64748B'
                         />
                       </Pressable>
                     </View>
                   ) : (
-                    <Text className='text-muted-foreground text-[13px] mt-0.5'>
+                    <Text className='text-muted-foreground mt-0.5 text-[13px] font-medium'>
                       {waterGoal} ml / dia
                     </Text>
                   )}
                 </View>
-                {!editingGoal && (
-                  <Pressable
-                    onPress={() => setEditingGoal(true)}
-                    className='w-10 h-10 items-center justify-center rounded-xl bg-neutral-50'>
-                    <HugeiconsIcon
-                      icon={PencilEdit02Icon}
-                      size={18}
-                      color='#64748B'
-                    />
-                  </Pressable>
-                )}
               </View>
+              {!editingGoal && (
+                <Pressable
+                  onPress={() => setEditingGoal(true)}
+                  className='p-3 rounded-2xl bg-surface-secondary active:bg-brand-lilac/10'>
+                  <HugeiconsIcon
+                    icon={PencilEdit02Icon}
+                    size={18}
+                    color='#9D75CB'
+                  />
+                </Pressable>
+              )}
+            </View>
 
-              <Pressable
-                onPress={() => router.push('/medications/list' as Href)}
-                className='flex-row items-center gap-3 w-full px-4 py-4 bg-white active:bg-surface-secondary'>
-                <View className='p-2.5 rounded-2xl bg-feedback-success-light'>
+            <Pressable
+              onPress={() => router.push('/medications/list' as Href)}
+              className='flex-row items-center justify-between px-5 py-4 active:bg-surface-secondary transition-colors'>
+              <View className='flex-row items-center gap-4'>
+                <View className='p-3 rounded-[20px] bg-emerald-50'>
                   <HugeiconsIcon
                     icon={PillBottleIcon}
-                    size={20}
+                    size={22}
                     color='#10B981'
                   />
                 </View>
-                <Text className='flex-1 font-bold text-foreground text-[15px]'>
+                <Text className='font-bold text-foreground text-[15px]'>
                   Gerenciar Medicamentos
                 </Text>
-                <HugeiconsIcon
-                  icon={ArrowRight01Icon}
-                  size={20}
-                  color='#64748B'
-                />
-              </Pressable>
-            </Section>
-          </MotiView>
-
-          <MotiView
-            from={{ opacity: 0, translateY: 16 }}
-            animate={{ opacity: 1, translateY: 0 }}
-            transition={{ type: 'timing', duration: 400, delay: 200 }}>
-            <Section title='Privacidade e Dados (LGPD)'>
-              <View className='px-4 py-4 border-b border-border bg-white'>
-                <View className='flex-row items-start gap-3'>
-                  <View className='p-2.5 rounded-2xl bg-brand-lilac/20 mt-0.5'>
-                    <HugeiconsIcon
-                      icon={SecurityCheckIcon}
-                      size={20}
-                      color='#9D75CB'
-                    />
-                  </View>
-                  <View className='flex-1 pr-2'>
-                    <Text className='font-bold text-foreground text-[15px]'>
-                      Seus dados são seus
-                    </Text>
-                    <Text className='text-muted-foreground text-[13px] mt-1 leading-relaxed'>
-                      O Healthy armazena tudo localmente no seu dispositivo.
-                      Nenhum dado é enviado para servidores externos nesta
-                      versão.
-                    </Text>
-                  </View>
-                </View>
               </View>
-              <Pressable
-                onPress={handleExportData}
-                className='flex-row items-center gap-3 w-full px-4 py-4 border-b border-border bg-white active:bg-surface-secondary'>
-                <View className='p-2.5 rounded-2xl bg-feedback-success-light'>
+              <HugeiconsIcon
+                icon={ArrowRight01Icon}
+                size={20}
+                color='#CBD5E1'
+              />
+            </Pressable>
+          </Section>
+        </MotiView>
+
+        <MotiView
+          from={{ opacity: 0, translateY: 20 }}
+          animate={{ opacity: 1, translateY: 0 }}
+          transition={{ type: 'spring', delay: 150, damping: 18 }}>
+          <Section title='Privacidade e Dados (LGPD)'>
+            <View className='px-5 py-4 border-b border-surface-secondary'>
+              <View className='flex-row items-start gap-4'>
+                <View className='p-3 rounded-[20px] bg-brand-lilac/10 mt-0.5'>
                   <HugeiconsIcon
-                    icon={Download04Icon}
-                    size={20}
-                    color='#10B981'
+                    icon={SecurityCheckIcon}
+                    size={22}
+                    color='#9D75CB'
                   />
                 </View>
-                <Text className='flex-1 font-bold text-foreground text-[15px]'>
-                  Exportar meus dados
-                </Text>
-                <HugeiconsIcon
-                  icon={ArrowRight01Icon}
-                  size={20}
-                  color='#64748B'
-                />
-              </Pressable>
-              <Pressable
-                onPress={handleDeleteAccount}
-                className='flex-row items-center gap-3 w-full px-4 py-4 bg-white active:bg-red-50'>
-                <View className='p-2.5 rounded-2xl bg-red-50'>
-                  <HugeiconsIcon
-                    icon={Delete03Icon}
-                    size={20}
-                    color='#EF4444'
-                  />
+                <View className='flex-1'>
+                  <Text className='font-bold text-foreground text-[15px]'>
+                    Seus dados são seus
+                  </Text>
+                  <Text className='text-muted-foreground text-[13px] mt-1 leading-relaxed pr-2'>
+                    O Healthy armazena tudo localmente no seu dispositivo.
+                    Nenhum dado é enviado para servidores externos nesta versão.
+                  </Text>
                 </View>
-                <Text className='flex-1 font-bold text-destructive text-[15px]'>
-                  Excluir minha conta
-                </Text>
-                <HugeiconsIcon
-                  icon={ArrowRight01Icon}
-                  size={20}
-                  color='#EF4444'
-                />
-              </Pressable>
-            </Section>
-          </MotiView>
-
-          <MotiView
-            from={{ opacity: 0, translateY: 16 }}
-            animate={{ opacity: 1, translateY: 0 }}
-            transition={{ type: 'timing', duration: 400, delay: 300 }}
-            className='pb-4'>
-            <Button variant='ghost' className='w-full' onPress={handleLogout}>
-              <View className='flex-row items-center justify-center gap-2'>
-                <HugeiconsIcon icon={Logout03Icon} size={18} color='#64748B' />
-                <Text className='text-muted-foreground font-bold'>
-                  Sair e reiniciar aplicativo
-                </Text>
               </View>
-            </Button>
-          </MotiView>
-        </View>
+            </View>
+            <Pressable
+              onPress={handleExportData}
+              className='flex-row items-center justify-between px-5 py-4 border-b border-surface-secondary active:bg-surface-secondary'>
+              <Text className='font-bold text-foreground text-[15px] pl-1'>
+                Exportar meus dados
+              </Text>
+              <HugeiconsIcon icon={Download04Icon} size={20} color='#64748B' />
+            </Pressable>
+            <Pressable
+              onPress={handleDeleteAccount}
+              className='flex-row items-center justify-between px-5 py-4 active:bg-red-50/50'>
+              <Text className='font-bold text-red-500 text-[15px] pl-1'>
+                Excluir minha conta
+              </Text>
+              <HugeiconsIcon icon={Delete03Icon} size={20} color='#EF4444' />
+            </Pressable>
+          </Section>
+        </MotiView>
+
+        <MotiView
+          from={{ opacity: 0, translateY: 20 }}
+          animate={{ opacity: 1, translateY: 0 }}
+          transition={{ type: 'spring', delay: 200, damping: 18 }}>
+          <Button
+            variant='ghost'
+            onPress={handleLogout}
+            className='mt-2 h-14 rounded-full'>
+            <View className='flex-row items-center gap-2'>
+              <HugeiconsIcon icon={Logout03Icon} size={18} color='#64748B' />
+              <Text className='text-muted-foreground font-bold'>
+                Sair do App
+              </Text>
+            </View>
+          </Button>
+        </MotiView>
       </ScrollView>
     </View>
   )
