@@ -2,9 +2,11 @@ import { Fire02Icon, Rocket02Icon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react-native'
 import { MotiView } from 'moti'
 import React from 'react'
-import { Image, Text, View } from 'react-native'
+import { Image, View } from 'react-native'
 import { cn } from '../../utils/formatters'
 import { useGamificationStore } from './store'
+
+import { Text } from '../../design-system/Text'
 
 function getPetImage(petState: string) {
   switch (petState) {
@@ -47,13 +49,11 @@ export function VirtualPet({ className }: { className?: string }) {
       <View className='flex-row w-full justify-between items-center mb-4 z-10'>
         <View className='bg-white/80 px-3 py-1 rounded-full flex-row items-center gap-1.5'>
           <HugeiconsIcon icon={Fire02Icon} size={20} color='#F59E0B' />
-          <Text className='text-sm font-bold text-purple-600'>
-            {streak} Dias
-          </Text>
+          <Text className='text-sm   text-purple-600'>{streak} Dias</Text>
         </View>
         <View className='bg-white/80 px-3 py-1 rounded-full flex-row items-center gap-1.5'>
           <HugeiconsIcon icon={Rocket02Icon} size={20} color='#9D75CB' />
-          <Text className='text-sm font-bold text-purple-600'>Nvl {level}</Text>
+          <Text className='text-sm   text-purple-600'>Nvl {level}</Text>
         </View>
       </View>
 
@@ -74,14 +74,12 @@ export function VirtualPet({ className }: { className?: string }) {
         />
       </MotiView>
 
-      <Text className='font-bold text-xl text-neutral-900 mt-2 z-10'>
-        {petName}
-      </Text>
+      <Text className='  text-xl text-neutral-900 mt-2 z-10'>{petName}</Text>
 
       <View className='w-full mt-4 space-y-1 z-10'>
         <View className='flex-row justify-between mb-1'>
-          <Text className='text-xs font-medium text-neutral-500'>XP</Text>
-          <Text className='text-xs font-medium text-neutral-500'>
+          <Text className='text-xs   text-neutral-500'>XP</Text>
+          <Text className='text-xs   text-neutral-500'>
             {xp} / {level * 100}
           </Text>
         </View>

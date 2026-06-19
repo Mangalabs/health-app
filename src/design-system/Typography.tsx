@@ -14,13 +14,13 @@ export const Typography = ({
   children,
   ...props
 }: TypographyProps) => {
-  const baseStyles = {
-    h1: 'text-[1.5rem] leading-tight font-heading text-foreground',
-    h2: 'text-[1.25rem] leading-snug font-heading text-foreground',
-    h3: 'text-[1.125rem] leading-snug font-heading text-foreground',
-    h4: 'text-[1rem] leading-normal font-heading text-foreground',
-    body: 'text-[0.875rem] leading-normal font-sans text-foreground',
-    caption: 'text-[0.8125rem] leading-normal font-sans text-muted-foreground',
+  const baseStyles: Record<NonNullable<TypographyProps['variant']>, string> = {
+    h1: 'text-[1.5rem] leading-tight text-foreground',
+    h2: 'text-[1.25rem] leading-tight text-foreground',
+    h3: 'text-[1.125rem] leading-tight text-foreground',
+    h4: 'text-[1rem] leading-snug text-foreground',
+    body: 'text-[0.875rem] leading-normal text-foreground',
+    caption: 'text-[0.75rem] leading-normal text-foreground',
   }
 
   const weightStyles = {
@@ -32,8 +32,9 @@ export const Typography = ({
   return (
     <Text
       className={cn(
+        'font-sans',
         baseStyles[variant],
-        weight && weightStyles[weight],
+        weight ? weightStyles[weight] : undefined,
         className,
       )}
       {...props}>

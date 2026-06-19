@@ -3,8 +3,10 @@ import { HugeiconsIcon } from '@hugeicons/react-native'
 import { useRouter } from 'expo-router'
 import { MotiView } from 'moti'
 import React from 'react'
-import { Text, View } from 'react-native'
+import { View } from 'react-native'
 import { Button } from '../../design-system/Button'
+
+import { Text } from '../../design-system/Text'
 
 interface EmptyStateProps {
   title?: string
@@ -34,7 +36,7 @@ export function EmptyState({
         />
       </View>
       <Text
-        className='font-bold text-neutral-900 mb-1 text-center'
+        className='  text-neutral-900 mb-1 text-center'
         style={{ fontSize: 16 }}>
         {title}
       </Text>
@@ -55,7 +57,7 @@ export function EmptyState({
               size={15}
               color='#7C3AED'
             />
-            <Text className='text-purple-600 font-bold text-sm'>
+            <Text className='text-purple-600   text-sm'>
               Adicionar Medicamento
             </Text>
           </View>

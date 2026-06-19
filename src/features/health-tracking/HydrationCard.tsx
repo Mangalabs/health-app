@@ -2,7 +2,7 @@ import { GlassWaterIcon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react-native'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import React from 'react'
-import { Text, View } from 'react-native'
+import { View } from 'react-native'
 import { healthApi } from '../../core/services/api'
 import { Button } from '../../design-system/Button'
 import {
@@ -14,6 +14,8 @@ import {
 } from '../../design-system/Card'
 import { ProgressRing } from '../../design-system/ProgressRing'
 import { useGamificationStore } from '../gamification/store'
+
+import { Text } from '../../design-system/Text'
 
 export function HydrationCard({
   current,
@@ -46,7 +48,7 @@ export function HydrationCard({
       </CardHeader>
       <CardContent className='flex-col items-center gap-4'>
         <ProgressRing progress={progress} size={120} color='#9D75CB'>
-          <Text className='text-2xl font-bold text-foreground'>{current}</Text>
+          <Text className='text-2xl   text-foreground'>{current}</Text>
           <Text className='text-xs text-muted-foreground'>ml</Text>
         </ProgressRing>
 
@@ -57,7 +59,7 @@ export function HydrationCard({
             onPress={() => mutation.mutate(200)}
             disabled={mutation.isPending}
             accessibilityLabel='Adicionar 200 ml de água'>
-            <Text className='text-sm font-bold text-brand-purple'>+ 200ml</Text>
+            <Text className='text-sm   text-brand-purple'>+ 200ml</Text>
           </Button>
           <Button
             variant='secondary'
@@ -65,7 +67,7 @@ export function HydrationCard({
             onPress={() => mutation.mutate(500)}
             disabled={mutation.isPending}
             accessibilityLabel='Adicionar 500 ml de água'>
-            <Text className='text-sm font-bold text-brand-purple'>+ 500ml</Text>
+            <Text className='text-sm   text-brand-purple'>+ 500ml</Text>
           </Button>
         </View>
       </CardContent>

@@ -10,13 +10,15 @@ import {
 import { HugeiconsIcon } from '@hugeicons/react-native'
 import { useRouter } from 'expo-router'
 import React, { useState } from 'react'
-import { Alert, FlatList, Pressable, Text, View } from 'react-native'
+import { Alert, FlatList, Pressable, View } from 'react-native'
 import Toast from 'react-native-toast-message'
 import { Medication } from '../../core/models/types'
 import { Button } from '../../design-system/Button'
 import { Typography } from '../../design-system/Typography'
 import { cn } from '../../utils/formatters'
 import { useMedicationsStore } from './store'
+
+import { Text } from '../../design-system/Text'
 
 type Tab = 'active' | 'inactive'
 
@@ -45,9 +47,7 @@ function MedicationItem({
 
         <View className='flex-1'>
           <View className='flex-row items-center gap-2 flex-wrap'>
-            <Text className='font-bold text-foreground text-[15px]'>
-              {med.name}
-            </Text>
+            <Text className='  text-foreground text-[15px]'>{med.name}</Text>
             <Text className='text-muted-foreground text-[13px]'>
               ({med.dosage})
             </Text>
@@ -63,14 +63,14 @@ function MedicationItem({
             {isOutOfStock ? (
               <View className='flex-row items-center gap-1'>
                 <HugeiconsIcon icon={Alert01Icon} size={16} color='#EF4444' />
-                <Text className='font-medium text-[12px] text-destructive'>
+                <Text className='  text-[12px] text-destructive'>
                   Sem estoque
                 </Text>
               </View>
             ) : (
               <Text
                 className={cn(
-                  'font-medium text-[12px]',
+                  '  text-[12px]',
                   isLowStock
                     ? 'text-feedback-warning'
                     : 'text-muted-foreground',
@@ -118,7 +118,7 @@ function MedicationItem({
                   size={20}
                   color='#9D75CB'
                 />
-                <Text className='text-brand-purple text-[12px] font-bold'>
+                <Text className='text-brand-purple text-[12px]  '>
                   Reativar
                 </Text>
               </Pressable>
@@ -209,7 +209,7 @@ export function MedicationsList() {
             )}>
             <Text
               className={cn(
-                'font-bold',
+                ' ',
                 tab === t ? 'text-brand-purple' : 'text-muted-foreground',
               )}
               style={{ fontSize: 14 }}>
@@ -244,7 +244,7 @@ export function MedicationsList() {
           variant='outline'
           onPress={() => router.push('/new-medication')}
           className='px-6'>
-          <Text className='text-brand-purple font-bold'>Adicionar</Text>
+          <Text className='text-brand-purple  '>Adicionar</Text>
         </Button>
       )}
     </View>

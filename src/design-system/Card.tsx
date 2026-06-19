@@ -1,6 +1,8 @@
 import React from 'react'
-import { Text, TextProps, View, ViewProps } from 'react-native'
+import { View, ViewProps } from 'react-native'
 import { cn } from '../utils/formatters'
+
+import { Text, TextProps } from './Text'
 
 export const Card = ({ className, children, ...props }: ViewProps) => (
   <View
@@ -28,10 +30,8 @@ export const CardHeader = ({ className, children, ...props }: ViewProps) => (
 
 export const CardTitle = ({ className, children, ...props }: TextProps) => (
   <Text
-    className={cn(
-      'text-xl font-bold tracking-tight text-foreground font-heading',
-      className,
-    )}
+    weight='semibold'
+    className={cn('text-xl tracking-tight', className)}
     {...props}>
     {children}
   </Text>

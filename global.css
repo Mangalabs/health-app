@@ -9,4 +9,7 @@
     --card: #ffffff;
     --border: #e2e8f0;
   }
+  text {
+    font-family: 'PlusJakartaSans_700Bold';
+  }
 }

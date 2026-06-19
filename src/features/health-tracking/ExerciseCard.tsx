@@ -9,7 +9,7 @@ import { HugeiconsIcon } from '@hugeicons/react-native'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { AnimatePresence, MotiView } from 'moti'
 import React from 'react'
-import { Text, View } from 'react-native'
+import { View } from 'react-native'
 import { healthApi } from '../../core/services/api'
 import { Button } from '../../design-system/Button'
 import {
@@ -20,6 +20,8 @@ import {
   CardTitle,
 } from '../../design-system/Card'
 import { useGamificationStore } from '../gamification/store'
+
+import { Text } from '../../design-system/Text'
 
 export function ExerciseCard({ completed }: { completed: boolean | null }) {
   const queryClient = useQueryClient()
@@ -69,7 +71,7 @@ export function ExerciseCard({ completed }: { completed: boolean | null }) {
                 accessibilityLabel='Hoje foi meu dia de descanso'>
                 <View className='flex-row items-center justify-center gap-2'>
                   <HugeiconsIcon icon={ZzzIcon} size={18} color='#9D75CB' />
-                  <Text className='text-brand-purple font-bold text-[15px]'>
+                  <Text className='text-brand-purple   text-[15px]'>
                     Dia Off
                   </Text>
                 </View>
@@ -88,9 +90,7 @@ export function ExerciseCard({ completed }: { completed: boolean | null }) {
                     size={18}
                     color='#FFFFFF'
                   />
-                  <Text className='text-white font-bold text-[15px]'>
-                    Treinei!
-                  </Text>
+                  <Text className='text-white   text-[15px]'>Treinei!</Text>
                 </View>
               </Button>
             </MotiView>
@@ -106,7 +106,7 @@ export function ExerciseCard({ completed }: { completed: boolean | null }) {
                     <HugeiconsIcon icon={FlameIcon} size={24} color='#FF8BA7' />
                   </View>
                   <Text
-                    className='font-bold text-foreground text-center'
+                    className='  text-foreground text-center'
                     style={{ fontSize: 16 }}>
                     Mandou bem demais!
                   </Text>
@@ -126,7 +126,7 @@ export function ExerciseCard({ completed }: { completed: boolean | null }) {
                     />
                   </View>
                   <Text
-                    className='font-bold text-foreground text-center'
+                    className='  text-foreground text-center'
                     style={{ fontSize: 16 }}>
                     Modo recarga ativado
                   </Text>

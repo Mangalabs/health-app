@@ -9,7 +9,6 @@ import {
   Platform,
   Pressable,
   ScrollView,
-  Text,
   View,
 } from 'react-native'
 import Toast from 'react-native-toast-message'
@@ -18,6 +17,8 @@ import { Button } from '../../design-system/Button'
 import { Input } from '../../design-system/Input'
 import { Typography } from '../../design-system/Typography'
 import { useMedicationsStore } from './store'
+
+import { Text } from '../../design-system/Text'
 
 const medicationSchema = z.object({
   name: z.string().min(2, 'Nome deve ter ao menos 2 caracteres'),
@@ -32,9 +33,7 @@ type MedicationFormValues = z.infer<typeof medicationSchema>
 function Field({ label, error, children, hint }: any) {
   return (
     <View className='space-y-1.5 mb-4'>
-      <Text className='font-bold text-foreground text-[14px] mb-1'>
-        {label}
-      </Text>
+      <Text className='  text-foreground text-[14px] mb-1'>{label}</Text>
       {children}
       {hint && !error && (
         <Text className='text-muted-foreground text-[12px] mt-1'>{hint}</Text>
@@ -237,13 +236,13 @@ export function MedicationForm() {
                 variant='outline'
                 className='flex-1 bg-transparent'
                 onPress={() => router.back()}>
-                <Text className='text-brand-purple font-bold'>Cancelar</Text>
+                <Text className='text-brand-purple  '>Cancelar</Text>
               </Button>
               <Button
                 className='flex-1'
                 disabled={isSubmitting}
                 onPress={handleSubmit(onSubmit)}>
-                <Text className='text-white font-bold'>
+                <Text className='text-white  '>
                   {isEditing ? 'Salvar' : 'Adicionar'}
                 </Text>
               </Button>

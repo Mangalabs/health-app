@@ -1,7 +1,7 @@
 import { HistoryIcon, WeightScaleIcon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react-native'
 import React, { useMemo, useState } from 'react'
-import { Text, View } from 'react-native'
+import { View } from 'react-native'
 import Toast from 'react-native-toast-message'
 import { Button } from '../../design-system/Button'
 import {
@@ -14,6 +14,7 @@ import {
 import { Input } from '../../design-system/Input'
 import { useWeightStore } from './store'
 
+import { Text } from '../../design-system/Text'
 const formatShortDate = (dateStr: string) => {
   const [y, m, d] = dateStr.split('-')
   return `${d}/${m}`
@@ -71,10 +72,10 @@ export function WeightCard() {
       <CardContent className='pt-2 space-y-4'>
         <View className='flex-row gap-3'>
           <View className='flex-1 bg-brand-lilac/10 border border-brand-lilac/20 rounded-2xl p-4'>
-            <Text className='text-muted-foreground text-[11px] uppercase font-bold mb-1'>
+            <Text className='text-muted-foreground text-[11px] uppercase   mb-1'>
               Hoje
             </Text>
-            <Text className='text-xl font-bold text-brand-purple'>
+            <Text className='text-xl   text-brand-purple'>
               {todayLog ? `${todayLog.weightKg} kg` : '--'}
             </Text>
           </View>
@@ -82,11 +83,11 @@ export function WeightCard() {
           <View className='flex-1 bg-surface-secondary border border-border rounded-2xl p-4'>
             <View className='flex-row items-center gap-1 mb-1'>
               <HugeiconsIcon icon={HistoryIcon} size={11} color='#64748B' />
-              <Text className='text-muted-foreground text-[11px] uppercase font-bold'>
+              <Text className='text-muted-foreground text-[11px] uppercase  '>
                 Último
               </Text>
             </View>
-            <Text className='text-xl font-bold text-foreground'>
+            <Text className='text-xl   text-foreground'>
               {lastLog ? `${lastLog.weightKg} kg` : '--'}
             </Text>
             {lastLog && (

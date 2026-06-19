@@ -9,7 +9,7 @@ import { HugeiconsIcon } from '@hugeicons/react-native'
 import { Href, useRouter } from 'expo-router'
 import { AnimatePresence, MotiView } from 'moti'
 import React, { useState } from 'react'
-import { Pressable, Text, View } from 'react-native'
+import { Pressable, View } from 'react-native'
 import { Button } from '../../design-system/Button'
 import {
   Card,
@@ -22,6 +22,8 @@ import { cn } from '../../utils/formatters'
 import { useGamificationStore } from '../gamification/store'
 import { EmptyState } from './EmptyState'
 import { useMedicationsStore } from './store'
+
+import { Text } from '../../design-system/Text'
 
 export function MedicationsCard() {
   const router = useRouter()
@@ -73,7 +75,7 @@ export function MedicationsCard() {
             />
             <View className='flex-1'>
               <CardTitle
-                className='text-green-500'
+                className='text-[#10B981] '
                 numberOfLines={2}
                 adjustsFontSizeToFit>
                 Vitaminas & Medicamentos
@@ -85,9 +87,7 @@ export function MedicationsCard() {
             onPress={() => router.push('/medications/list' as Href)}
             accessibilityLabel='Gerenciar medicamentos'
             className='flex-shrink-0 pt-1'>
-            <Text
-              className='text-brand-purple font-bold'
-              style={{ fontSize: 12 }}>
+            <Text className='text-brand-purple  ' style={{ fontSize: 12 }}>
               Gerenciar
             </Text>
           </Pressable>
@@ -119,7 +119,7 @@ export function MedicationsCard() {
                     <View className='flex-col flex-1 flex-shrink-1 mr-3'>
                       <View className='flex-row items-center flex-wrap gap-x-2 gap-y-1 mb-1.5'>
                         <Text
-                          className='font-bold text-foreground flex-shrink-1'
+                          className='  text-foreground flex-shrink-1'
                           style={{ fontSize: 14 }}
                           numberOfLines={1}
                           ellipsizeMode='tail'>
@@ -137,7 +137,7 @@ export function MedicationsCard() {
                               statusBadge.bg,
                             )}>
                             <Text
-                              className={cn('font-bold', statusBadge.color)}
+                              className={cn(' ', statusBadge.color)}
                               style={{ fontSize: 10 }}>
                               {statusBadge.label}
                             </Text>
@@ -155,7 +155,7 @@ export function MedicationsCard() {
                         </View>
                         <Text
                           className={cn(
-                            'font-medium',
+                            ' ',
                             isOutOfStock
                               ? 'text-destructive'
                               : isLowStock

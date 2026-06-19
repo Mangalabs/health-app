@@ -10,10 +10,12 @@ import {
 import { HugeiconsIcon } from '@hugeicons/react-native'
 import { MotiView } from 'moti'
 import React from 'react'
-import { Image, ScrollView, Text, View } from 'react-native'
+import { Image, ScrollView, View } from 'react-native'
 import { Typography } from '../../design-system/Typography'
 import { cn } from '../../utils/formatters'
 import { useGamificationStore } from '../gamification/store'
+
+import { Text } from '../../design-system/Text'
 
 const LEVEL_MESSAGES = [
   {
@@ -82,10 +84,10 @@ function StatCard({ icon, label, value, colorClass, bgColorClass }: any) {
   return (
     <View className='w-[48%] flex-col items-center justify-center p-4 bg-white rounded-[24px] border border-border shadow-sm gap-1 mb-3'>
       <View className={cn('p-2.5 rounded-2xl mb-1', bgColorClass)}>{icon}</View>
-      <Text className='font-heading font-bold text-foreground text-xl'>
+      <Text weight='semibold' className=' text-foreground text-xl'>
         {value}
       </Text>
-      <Text className='text-muted-foreground text-center text-[11px] uppercase tracking-wider font-bold mt-1'>
+      <Text className='text-muted-foreground text-center text-[11px] uppercase tracking-wider   mt-1'>
         {label}
       </Text>
     </View>
@@ -144,17 +146,13 @@ export function PetPage() {
             <View className='flex-row w-full justify-between items-center mb-6 z-10'>
               <View className='bg-white px-3 py-1.5 rounded-full flex-row items-center gap-1.5 border border-border shadow-sm'>
                 <HugeiconsIcon icon={Fire02Icon} size={18} color='#F59E0B' />
-                <Text
-                  className='font-bold text-brand-purple'
-                  style={{ fontSize: 13 }}>
+                <Text className='  text-brand-purple' style={{ fontSize: 13 }}>
                   {streak} dias
                 </Text>
               </View>
               <View className='bg-white px-3 py-1.5 rounded-full flex-row items-center gap-1.5 border border-border shadow-sm'>
                 <HugeiconsIcon icon={Rocket02Icon} size={18} color='#9D75CB' />
-                <Text
-                  className='font-bold text-brand-purple'
-                  style={{ fontSize: 13 }}>
+                <Text className='  text-brand-purple' style={{ fontSize: 13 }}>
                   Nível {level}
                 </Text>
               </View>
@@ -175,14 +173,16 @@ export function PetPage() {
               />
             </MotiView>
 
-            <Text className='font-heading font-bold text-foreground mt-4 z-10 text-2xl'>
+            <Text
+              weight='semibold'
+              className=' text-foreground mt-4 z-10 text-2xl'>
               {petName}
             </Text>
             <View className='flex-row items-center gap-1 justify-center mt-2 z-10 max-w-[260px] bg-white/80 px-6 py-2 rounded-2xl border border-border'>
               <HugeiconsIcon icon={LevelIcon} size={22} color={levelColor} />
 
               <Text
-                className='ml-1 text-muted-foreground font-medium'
+                className='ml-1 text-muted-foreground  '
                 style={{ fontSize: 13 }}>
                 {levelText}
               </Text>
@@ -191,13 +191,11 @@ export function PetPage() {
             <View className='w-full mt-8 space-y-2 z-10'>
               <View className='flex-row justify-between mb-1'>
                 <Text
-                  className='font-bold text-muted-foreground'
+                  className='  text-muted-foreground'
                   style={{ fontSize: 12 }}>
                   XP para o próximo nível
                 </Text>
-                <Text
-                  className='font-bold text-brand-purple'
-                  style={{ fontSize: 12 }}>
+                <Text className='  text-brand-purple' style={{ fontSize: 12 }}>
                   {xp} / {xpToNextLevel}
                 </Text>
               </View>
@@ -256,7 +254,7 @@ export function PetPage() {
             transition={{ type: 'timing', duration: 400, delay: 200 }}>
             <View className='flex-row items-center justify-center gap-2 mb-1'>
               <HugeiconsIcon icon={HouseHeartIcon} size={22} color='#9D75CB' />
-              <Text className='font-heading font-bold text-brand-purple text-base'>
+              <Text className='   text-brand-purple text-base'>
                 Continue assim!
               </Text>
             </View>

@@ -4,18 +4,14 @@ import { HugeiconsIcon } from '@hugeicons/react-native'
 import { AnimatePresence, MotiView } from 'moti'
 import React from 'react'
 import { Controller, useForm } from 'react-hook-form'
-import {
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  Text,
-  View,
-} from 'react-native'
+import { KeyboardAvoidingView, Platform, ScrollView, View } from 'react-native'
 import { z } from 'zod'
 import { Button } from '../../design-system/Button'
 import { Input } from '../../design-system/Input'
 import { Typography } from '../../design-system/Typography'
 import { useGamificationStore } from '../gamification/store'
+
+import { Text } from '../../design-system/Text'
 
 const schema = z.object({
   name: z.string().min(2, 'O nome deve ter pelo menos 2 caracteres'),

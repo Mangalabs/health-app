@@ -1,6 +1,7 @@
 import {
   ArrowLeft02Icon,
   ArrowRight01Icon,
+  Calendar01Icon,
   ChartDownIcon,
   ChartUpIcon,
   GlassWaterIcon,
@@ -11,19 +12,16 @@ import { HugeiconsIcon } from '@hugeicons/react-native'
 import { useQuery } from '@tanstack/react-query'
 import { MotiView } from 'moti'
 import React, { useMemo, useState } from 'react'
-import { Pressable, ScrollView, Text, View } from 'react-native'
+import { Pressable, ScrollView, View } from 'react-native'
 import { LineChart } from 'react-native-gifted-charts'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { MedicationLog } from '../../core/models/types'
 import { healthApi } from '../../core/services/api'
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from '../../design-system/Card'
 import { Typography } from '../../design-system/Typography'
 import { cn } from '../../utils/formatters'
 import { useMedicationsStore } from '../medications/store'
+
+import { Text } from '../../design-system/Text'
 
 const WEEK_DAYS = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb']
 const MONTHS = [
@@ -55,9 +53,9 @@ function getAdherence(logs: MedicationLog[], dateStr: string): DayAdherence {
 
 const ADHERENCE_COLORS: Record<DayAdherence, string> = {
   good: 'bg-feedback-success',
-  partial: 'bg-feedback-warning',
+  partial: 'bg-[#F59E0B]',
   missed: 'bg-destructive',
-  none: '',
+  none: 'bg-transparent',
 }
 
 const ADHERENCE_LABELS: Record<DayAdherence, string> = {
@@ -67,7 +65,26 @@ const ADHERENCE_LABELS: Record<DayAdherence, string> = {
   none: 'Sem registro',
 }
 
+function StatsCard({ children }: { children: React.ReactNode }) {
+  return (
+    <View
+      className='bg-white rounded-[32px] overflow-hidden mb-6'
+      style={{
+        borderWidth: 1,
+        borderColor: 'rgba(157, 117, 203, 0.08)',
+        shadowColor: '#9D75CB',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.03,
+        shadowRadius: 12,
+        elevation: 2,
+      }}>
+      {children}
+    </View>
+  )
+}
+
 export function Statistics() {
+  const insets = useSafeAreaInsets()
   const today = new Date()
   const [viewDate, setViewDate] = useState(
     new Date(today.getFullYear(), today.getMonth(), 1),
@@ -152,7 +169,7 @@ export function Statistics() {
   const weightChartData = useMemo(() => {
     return weightLogs
       .slice(-8)
-      .map((w) => ({ label: w.date.slice(5), value: w.weightKg }))
+      .map((w) => ({ label: w.date.slice(8, 10), value: w.weightKg }))
   }, [weightLogs])
 
   const weightTrend = useMemo(() => {
@@ -167,102 +184,123 @@ export function Statistics() {
 
   return (
     <View className='flex-1 bg-background'>
-      <View
-        className='absolute top-0 left-0 w-full h-48 bg-brand-lilac/10'
-        pointerEvents='none'
-      />
-
       <ScrollView
         className='flex-1'
-        contentContainerStyle={{ paddingBottom: 112 }}
+        contentContainerStyle={{
+          paddingHorizontal: 16,
+          paddingTop: Math.max(insets.top + 16, 24),
+          paddingBottom: insets.bottom + 120,
+        }}
         showsVerticalScrollIndicator={false}>
-        <View className='w-full max-w-[448px] self-center px-4 pt-14 pb-6 space-y-6'>
-          <View>
-            <Typography variant='h1'>Estatísticas</Typography>
-            <Typography variant='caption' className='mt-1'>
-              Acompanhe sua evolução
-            </Typography>
-          </View>
-
+        <View className='w-full max-w-[448px] self-center pt-8 pb-6'>
           <MotiView
-            from={{ opacity: 0, translateY: 16 }}
+            from={{ opacity: 0, translateY: 10 }}
             animate={{ opacity: 1, translateY: 0 }}
             transition={{ type: 'timing', duration: 400 }}>
-            <Card>
-              <CardHeader className='pb-2'>
-                <View className='flex-row items-center justify-between'>
-                  <CardTitle
-                    className='text-foreground flex-shrink-1'
-                    numberOfLines={1}
-                    adjustsFontSizeToFit>
-                    Adesão Mensal
-                  </CardTitle>
-                  <View className='flex-row items-center gap-1'>
-                    <Pressable
-                      onPress={prevMonth}
-                      className='w-8 h-8 items-center justify-center rounded-xl bg-surface-secondary'>
-                      <HugeiconsIcon
-                        icon={ArrowLeft02Icon}
-                        size={16}
-                        color='#64748B'
-                      />
-                    </Pressable>
-                    <Text
-                      className='font-bold text-foreground text-center'
-                      style={{ fontSize: 13, minWidth: 90 }}>
-                      {MONTHS[month]} {year}
-                    </Text>
-                    <Pressable
-                      onPress={nextMonth}
-                      className='w-8 h-8 items-center justify-center rounded-xl bg-surface-secondary'>
-                      <HugeiconsIcon
-                        icon={ArrowRight01Icon}
-                        size={16}
-                        color='#64748B'
-                      />
-                    </Pressable>
-                  </View>
-                </View>
-              </CardHeader>
-              <CardContent className='pt-2'>
-                <View className='flex-row justify-between mb-2'>
-                  {WEEK_DAYS.map((d) => (
-                    <Text
-                      key={d}
-                      className='text-center font-bold text-muted-foreground w-[14%]'
-                      style={{ fontSize: 11 }}>
-                      {d}
-                    </Text>
-                  ))}
-                </View>
-                <View className='flex-row flex-wrap'>
-                  {calendarDays.map((cell, i) => {
-                    if (!cell)
-                      return (
-                        <View
-                          key={`empty-${i}`}
-                          className='w-[14%] aspect-square'
-                        />
-                      )
-                    const isToday =
-                      cell.dateStr === today.toISOString().split('T')[0]
-                    const adColor =
-                      ADHERENCE_COLORS[cell.adherence as DayAdherence]
+            <Typography variant='h1' className='text-brand-purple'>
+              Estatísticas
+            </Typography>
+            <Typography
+              variant='caption'
+              className='mt-1 text-muted-foreground'>
+              Acompanhe sua evolução e hábitos
+            </Typography>
+          </MotiView>
+        </View>
 
+        {/* Card: Adesão Mensal */}
+        <MotiView
+          from={{ opacity: 0, translateY: 20 }}
+          animate={{ opacity: 1, translateY: 0 }}
+          transition={{ type: 'spring', damping: 18, delay: 100 }}>
+          <StatsCard>
+            <View className='p-5 border-b border-surface-secondary'>
+              <View className='flex-row items-center justify-between'>
+                <View className='flex-row items-center gap-3'>
+                  <View className='p-2.5 rounded-[18px] bg-brand-lilac/10'>
+                    <HugeiconsIcon
+                      icon={Calendar01Icon}
+                      size={20}
+                      color='#9D75CB'
+                    />
+                  </View>
+                  <Text className='  text-brand-purple text-[16px]'>
+                    Adesão Mensal
+                  </Text>
+                </View>
+
+                <View className='flex-row items-center gap-1.5 bg-surface-secondary px-1 py-1 rounded-2xl'>
+                  <Pressable
+                    onPress={prevMonth}
+                    className='w-8 h-8 items-center justify-center rounded-xl bg-white shadow-sm active:opacity-70'>
+                    <HugeiconsIcon
+                      icon={ArrowLeft02Icon}
+                      size={16}
+                      color='#64748B'
+                    />
+                  </Pressable>
+                  <Text
+                    className='  text-foreground text-center'
+                    style={{ fontSize: 13, minWidth: 85 }}>
+                    {MONTHS[month]} {year}
+                  </Text>
+                  <Pressable
+                    onPress={nextMonth}
+                    className='w-8 h-8 items-center justify-center rounded-xl bg-white shadow-sm active:opacity-70'>
+                    <HugeiconsIcon
+                      icon={ArrowRight01Icon}
+                      size={16}
+                      color='#64748B'
+                    />
+                  </Pressable>
+                </View>
+              </View>
+            </View>
+
+            <View className='px-5 py-4'>
+              <View className='flex-row justify-between mb-3'>
+                {WEEK_DAYS.map((d) => (
+                  <Text
+                    key={d}
+                    className='text-center   text-muted-foreground/60 w-[14%]'
+                    style={{ fontSize: 11, textTransform: 'uppercase' }}>
+                    {d}
+                  </Text>
+                ))}
+              </View>
+
+              <View className='flex-row flex-wrap'>
+                {calendarDays.map((cell, i) => {
+                  if (!cell)
                     return (
                       <View
-                        key={cell.dateStr}
+                        key={`empty-${i}`}
+                        className='w-[14%] aspect-square'
+                      />
+                    )
+
+                  const isToday =
+                    cell.dateStr === today.toISOString().split('T')[0]
+                  const adColor =
+                    ADHERENCE_COLORS[cell.adherence as DayAdherence]
+
+                  return (
+                    <View
+                      key={cell.dateStr}
+                      className='w-[14%] aspect-square items-center justify-center p-1'>
+                      <View
                         className={cn(
-                          'w-[14%] aspect-square items-center justify-center rounded-xl',
-                          isToday && 'border-2 border-brand-purple',
+                          'w-full h-full items-center justify-center rounded-[14px]',
+                          isToday &&
+                            'border-2 border-brand-purple bg-brand-lilac/5',
                           cell.isFuture && 'opacity-30',
                         )}>
                         <Text
                           className={cn(
-                            'font-medium',
+                            ' ',
                             isToday ? 'text-brand-purple' : 'text-foreground',
                           )}
-                          style={{ fontSize: 12 }}>
+                          style={{ fontSize: 13 }}>
                           {cell.day}
                         </Text>
                         {!cell.isFuture && cell.adherence !== 'none' && (
@@ -274,167 +312,188 @@ export function Statistics() {
                           />
                         )}
                       </View>
-                    )
-                  })}
-                </View>
-                <View className='flex-row items-center gap-3 mt-4 pt-3 border-t border-border flex-wrap justify-center'>
-                  {(['good', 'partial', 'missed'] as DayAdherence[]).map(
-                    (key) => (
-                      <View key={key} className='flex-row items-center gap-1.5'>
-                        <View
-                          className={cn(
-                            'w-2.5 h-2.5 rounded-full',
-                            ADHERENCE_COLORS[key],
-                          )}
-                        />
-                        <Text
-                          className='text-muted-foreground'
-                          style={{ fontSize: 11 }}>
-                          {ADHERENCE_LABELS[key]}
-                        </Text>
-                      </View>
-                    ),
-                  )}
-                </View>
-              </CardContent>
-            </Card>
-          </MotiView>
+                    </View>
+                  )
+                })}
+              </View>
 
-          <MotiView
-            from={{ opacity: 0, translateY: 16 }}
-            animate={{ opacity: 1, translateY: 0 }}
-            transition={{ type: 'timing', duration: 400, delay: 100 }}>
-            <Card>
-              <CardHeader className='pb-2'>
-                <View className='flex-row items-center justify-between'>
-                  <View className='flex-row items-center gap-2'>
-                    <HugeiconsIcon
-                      icon={GlassWaterIcon}
-                      size={18}
-                      color='#9D75CB'
-                    />
-                    <CardTitle className='text-brand-purple'>
-                      Hidratação
-                    </CardTitle>
-                  </View>
-                  <Text
-                    className='font-bold text-brand-purple'
-                    style={{ fontSize: 14 }}>
-                    {weeklyWaterAvg} ml/dia
-                  </Text>
-                </View>
-                <Text
-                  className='text-muted-foreground'
-                  style={{ fontSize: 12 }}>
-                  Média dos últimos 7 dias
-                </Text>
-              </CardHeader>
-              <CardContent>
-                <View className='mt-4 -ml-4'>
-                  <LineChart
-                    data={hydrationChartData}
-                    height={120}
-                    thickness={2.5}
-                    color='#9D75CB'
-                    dataPointsColor='#9D75CB'
-                    hideRules
-                    yAxisTextStyle={{ color: '#64748B', fontSize: 10 }}
-                    xAxisLabelTextStyle={{ color: '#64748B', fontSize: 10 }}
-                    hideYAxisText={false}
-                    adjustToWidth
-                    isAnimated
-                  />
-                </View>
-              </CardContent>
-            </Card>
-          </MotiView>
-
-          <MotiView
-            from={{ opacity: 0, translateY: 16 }}
-            animate={{ opacity: 1, translateY: 0 }}
-            transition={{ type: 'timing', duration: 400, delay: 200 }}>
-            <Card>
-              <CardHeader className='pb-2'>
-                <View className='flex-row items-center justify-between'>
-                  <View className='flex-row items-center gap-2'>
-                    <HugeiconsIcon
-                      icon={WeightScaleIcon}
-                      size={18}
-                      color='#FF8BA7'
-                    />
-                    <CardTitle className='text-brand-pink'>
-                      Peso Corporal
-                    </CardTitle>
-                  </View>
-                  {weightTrend !== null && (
-                    <View
-                      className={cn(
-                        'flex-row items-center gap-1 px-2 py-1 rounded-full',
-                        weightTrend < 0
-                          ? 'bg-feedback-success-light'
-                          : weightTrend > 0
-                            ? 'bg-red-50'
-                            : 'bg-muted',
-                      )}>
-                      {weightTrend < 0 ? (
-                        <HugeiconsIcon
-                          icon={ChartDownIcon}
-                          size={14}
-                          color='#10B981'
-                        />
-                      ) : weightTrend > 0 ? (
-                        <HugeiconsIcon
-                          icon={ChartUpIcon}
-                          size={14}
-                          color='#EF4444'
-                        />
-                      ) : (
-                        <HugeiconsIcon
-                          icon={MinusSignIcon}
-                          size={14}
-                          color='#64748B'
-                        />
-                      )}
-                      <Text
+              <View className='flex-row items-center gap-4 mt-4 pt-4 border-t border-surface-secondary flex-wrap justify-center'>
+                {(['good', 'partial', 'missed'] as DayAdherence[]).map(
+                  (key) => (
+                    <View key={key} className='flex-row items-center gap-1.5'>
+                      <View
                         className={cn(
-                          'font-bold',
-                          weightTrend < 0
-                            ? 'text-feedback-success'
-                            : weightTrend > 0
-                              ? 'text-destructive'
-                              : 'text-muted-foreground',
+                          'w-2.5 h-2.5 rounded-full',
+                          ADHERENCE_COLORS[key],
                         )}
-                        style={{ fontSize: 13 }}>
-                        {weightTrend > 0 ? '+' : ''}
-                        {weightTrend} kg
+                      />
+                      <Text
+                        className='text-muted-foreground  '
+                        style={{ fontSize: 11 }}>
+                        {ADHERENCE_LABELS[key]}
                       </Text>
                     </View>
-                  )}
+                  ),
+                )}
+              </View>
+            </View>
+          </StatsCard>
+        </MotiView>
+
+        {/* Card: Hidratação */}
+        <MotiView
+          from={{ opacity: 0, translateY: 20 }}
+          animate={{ opacity: 1, translateY: 0 }}
+          transition={{ type: 'spring', damping: 18, delay: 150 }}>
+          <StatsCard>
+            <View className='p-5'>
+              <View className='flex-row items-center justify-between mb-2'>
+                <View className='flex-row items-center gap-3'>
+                  <View className='p-2.5 rounded-[18px] bg-brand-lilac/10'>
+                    <HugeiconsIcon
+                      icon={GlassWaterIcon}
+                      size={20}
+                      color='#9D75CB'
+                    />
+                  </View>
+                  <Text className='  text-brand-purple text-[16px]'>
+                    Hidratação
+                  </Text>
                 </View>
-              </CardHeader>
-              <CardContent>
-                <View className='mt-4 -ml-4'>
-                  <LineChart
-                    data={
-                      weightChartData.length
-                        ? weightChartData
-                        : [{ value: 0, label: 'Hoje' }]
-                    }
-                    height={120}
-                    thickness={2.5}
-                    color='#FF8BA7'
-                    dataPointsColor='#FF8BA7'
-                    hideRules
-                    yAxisTextStyle={{ color: '#64748B', fontSize: 10 }}
-                    xAxisLabelTextStyle={{ color: '#64748B', fontSize: 10 }}
-                    adjustToWidth
-                    isAnimated
-                  />
+                <View className='items-end'>
+                  <Text className='  text-brand-purple text-[15px]'>
+                    {weeklyWaterAvg} ml
+                  </Text>
+                  <Text
+                    className='text-muted-foreground'
+                    style={{ fontSize: 11 }}>
+                    Média 7 dias
+                  </Text>
                 </View>
-              </CardContent>
-            </Card>
-          </MotiView>
-        </View>
+              </View>
+              <View className='mt-4 -ml-4'>
+                <LineChart
+                  data={hydrationChartData}
+                  height={120}
+                  thickness={3}
+                  color='#9D75CB'
+                  dataPointsColor='#9D75CB'
+                  dataPointsRadius={4}
+                  hideRules
+                  yAxisTextStyle={{
+                    color: '#94A3B8',
+                    fontSize: 10,
+                    fontWeight: '600',
+                  }}
+                  xAxisLabelTextStyle={{
+                    color: '#94A3B8',
+                    fontSize: 10,
+                    fontWeight: '600',
+                  }}
+                  hideYAxisText={false}
+                  adjustToWidth
+                  isAnimated
+                />
+              </View>
+            </View>
+          </StatsCard>
+        </MotiView>
+
+        {/* Card: Peso Corporal */}
+        <MotiView
+          from={{ opacity: 0, translateY: 20 }}
+          animate={{ opacity: 1, translateY: 0 }}
+          transition={{ type: 'spring', damping: 18, delay: 200 }}>
+          <StatsCard>
+            <View className='p-5'>
+              <View className='flex-row items-center justify-between mb-2'>
+                <View className='flex-row items-center gap-3'>
+                  <View className='p-2.5 rounded-[18px] bg-brand-pink/10'>
+                    <HugeiconsIcon
+                      icon={WeightScaleIcon}
+                      size={20}
+                      color='#FF8BA7'
+                    />
+                  </View>
+                  <Text className='  text-brand-pink text-[16px]'>
+                    Peso Corporal
+                  </Text>
+                </View>
+                {weightTrend !== null && (
+                  <View
+                    className={cn(
+                      'flex-row items-center gap-1 px-2.5 py-1.5 rounded-full',
+                      weightTrend < 0
+                        ? 'bg-emerald-50'
+                        : weightTrend > 0
+                          ? 'bg-red-50'
+                          : 'bg-slate-50',
+                    )}>
+                    {weightTrend < 0 ? (
+                      <HugeiconsIcon
+                        icon={ChartDownIcon}
+                        size={14}
+                        color='#10B981'
+                      />
+                    ) : weightTrend > 0 ? (
+                      <HugeiconsIcon
+                        icon={ChartUpIcon}
+                        size={14}
+                        color='#EF4444'
+                      />
+                    ) : (
+                      <HugeiconsIcon
+                        icon={MinusSignIcon}
+                        size={14}
+                        color='#64748B'
+                      />
+                    )}
+                    <Text
+                      className={cn(
+                        ' ',
+                        weightTrend < 0
+                          ? 'text-emerald-500'
+                          : weightTrend > 0
+                            ? 'text-red-500'
+                            : 'text-slate-500',
+                      )}
+                      style={{ fontSize: 12 }}>
+                      {weightTrend > 0 ? '+' : ''}
+                      {weightTrend} kg
+                    </Text>
+                  </View>
+                )}
+              </View>
+              <View className='mt-4 -ml-4'>
+                <LineChart
+                  data={
+                    weightChartData.length
+                      ? weightChartData
+                      : [{ value: 0, label: 'Hoje' }]
+                  }
+                  height={120}
+                  thickness={3}
+                  color='#FF8BA7'
+                  dataPointsColor='#FF8BA7'
+                  dataPointsRadius={4}
+                  hideRules
+                  yAxisTextStyle={{
+                    color: '#94A3B8',
+                    fontSize: 10,
+                    fontWeight: '600',
+                  }}
+                  xAxisLabelTextStyle={{
+                    color: '#94A3B8',
+                    fontSize: 10,
+                    fontWeight: '600',
+                  }}
+                  adjustToWidth
+                  isAnimated
+                />
+              </View>
+            </View>
+          </StatsCard>
+        </MotiView>
       </ScrollView>
     </View>
   )

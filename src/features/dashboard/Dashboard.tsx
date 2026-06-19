@@ -1,7 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
 import { MotiView } from 'moti'
 import React from 'react'
-import { ActivityIndicator, ScrollView, Text, View } from 'react-native'
+import { ActivityIndicator, ScrollView, View } from 'react-native'
 import { healthApi } from '../../core/services/api'
 import { useGamificationStore } from '../gamification/store'
 import { VirtualPet } from '../gamification/VirtualPet'
@@ -9,6 +9,8 @@ import { ExerciseCard } from '../health-tracking/ExerciseCard'
 import { HydrationCard } from '../health-tracking/HydrationCard'
 import { WeightCard } from '../health-tracking/WeightCard'
 import { MedicationsCard } from '../medications/MedicationsCard'
+
+import { Text } from '../../design-system/Text'
 
 export function Dashboard() {
   const { user } = useGamificationStore()
@@ -33,9 +35,7 @@ export function Dashboard() {
   if (isError || !today) {
     return (
       <View className='flex-1 items-center justify-center bg-background'>
-        <Text className='text-destructive font-bold'>
-          Erro ao carregar dados.
-        </Text>
+        <Text className='text-destructive  '>Erro ao carregar dados.</Text>
       </View>
     )
   }
@@ -63,14 +63,15 @@ export function Dashboard() {
         <View className='w-full max-w-[448px] self-center px-4 pt-10 pb-6 flex-col gap-6'>
           <View accessibilityRole='header'>
             <Text
-              className='font-bold text-foreground'
+              weight='bold'
+              className=' text-red-600'
               style={{ fontSize: 24 }}
               numberOfLines={1}
               adjustsFontSizeToFit>
               {getGreeting()}, {user.name || 'Amigo(a)'}!
             </Text>
             <Text
-              className='text-muted-foreground'
+              className=' text-muted-foreground'
               style={{ fontSize: 14, marginTop: 4 }}>
               Pronto para cuidar de você hoje?
             </Text>
@@ -88,7 +89,6 @@ export function Dashboard() {
             from={{ opacity: 0, translateY: 20 }}
             animate={{ opacity: 1, translateY: 0 }}
             transition={{ type: 'timing', duration: 450, delay: 100 }}>
-            {/* Todos os cards empilhados verticalmente (Mobile First) */}
             <MedicationsCard />
             <HydrationCard current={today.hydrationCurrent} goal={waterGoal} />
             <ExerciseCard completed={today.exerciseCompleted} />

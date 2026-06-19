@@ -5,8 +5,8 @@ import { Text, View } from 'react-native'
 export default function NotFoundScreen() {
   return (
     <View className='flex-1 items-center justify-center p-5'>
-      <Text className='text-xl font-bold'>Essa tela não existe.</Text>
-      <Link href='/' className='mt-4 text-purple-600 font-bold'>
+      <Text className='text-xl  '>Essa tela não existe.</Text>
+      <Link href='/' className='mt-4 text-purple-600  '>
         Voltar para o início
       </Link>
     </View>

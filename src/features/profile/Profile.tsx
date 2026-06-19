@@ -16,19 +16,14 @@ import { LinearGradient } from 'expo-linear-gradient'
 import { Href, useRouter } from 'expo-router'
 import { MotiView } from 'moti'
 import React, { useState } from 'react'
-import {
-  Alert,
-  Pressable,
-  ScrollView,
-  Text,
-  TextInput,
-  View,
-} from 'react-native'
+import { Alert, Pressable, ScrollView, TextInput, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import Toast from 'react-native-toast-message'
 import { Button } from '../../design-system/Button'
 import { Typography } from '../../design-system/Typography'
 import { useGamificationStore } from '../gamification/store'
+
+import { Text } from '../../design-system/Text'
 
 interface SectionProps {
   title: string
@@ -39,7 +34,7 @@ function Section({ title, children }: SectionProps) {
   return (
     <View className='mb-6'>
       <Text
-        className='font-bold text-muted-foreground/60 px-4 mb-2 uppercase tracking-[2px]'
+        className='  text-muted-foreground/60 px-4 mb-2 uppercase tracking-[2px]'
         style={{ fontSize: 11 }}>
         {title}
       </Text>
@@ -158,7 +153,7 @@ export function Profile() {
             className='flex-col items-center py-8 px-6'>
             <View className='w-24 h-24 mb-4 rounded-full bg-white p-1 shadow-sm'>
               <View className='flex-1 rounded-full bg-brand-purple items-center justify-center'>
-                <Text className='font-bold text-white text-2xl tracking-widest'>
+                <Text className='  text-white text-2xl tracking-widest'>
                   {initials}
                 </Text>
               </View>
@@ -176,7 +171,7 @@ export function Profile() {
                 size={16}
                 color='#FF8BA7'
               />
-              <Text className='text-brand-purple font-bold text-[13px]'>
+              <Text className='text-brand-purple   text-[13px]'>
                 Cuidando bem de você
               </Text>
             </View>
@@ -198,7 +193,7 @@ export function Profile() {
                   />
                 </View>
                 <View className='flex-1 pr-2'>
-                  <Text className='font-bold text-foreground text-[15px]'>
+                  <Text className='  text-foreground text-[15px]'>
                     Meta Diária de Água
                   </Text>
                   {editingGoal ? (
@@ -208,9 +203,9 @@ export function Profile() {
                         value={goalInput}
                         onChangeText={setGoalInput}
                         maxLength={4}
-                        className='w-24 h-12 border border-brand-lilac/30 rounded-xl px-3 py-0 bg-surface-secondary font-bold text-brand-purple text-[15px]'
+                        className='w-24 h-12 border border-brand-lilac/30 rounded-xl px-3 py-0 bg-surface-secondary   text-brand-purple text-[15px]'
                       />
-                      <Text className='text-muted-foreground font-medium text-[13px]'>
+                      <Text className='text-muted-foreground   text-[13px]'>
                         ml
                       </Text>
                       <Pressable
@@ -233,7 +228,7 @@ export function Profile() {
                       </Pressable>
                     </View>
                   ) : (
-                    <Text className='text-muted-foreground mt-0.5 text-[13px] font-medium'>
+                    <Text className='text-muted-foreground mt-0.5 text-[13px]  '>
                       {waterGoal} ml / dia
                     </Text>
                   )}
@@ -263,7 +258,7 @@ export function Profile() {
                     color='#10B981'
                   />
                 </View>
-                <Text className='font-bold text-foreground text-[15px]'>
+                <Text className='  text-foreground text-[15px]'>
                   Gerenciar Medicamentos
                 </Text>
               </View>
@@ -291,7 +286,7 @@ export function Profile() {
                   />
                 </View>
                 <View className='flex-1'>
-                  <Text className='font-bold text-foreground text-[15px]'>
+                  <Text className='  text-foreground text-[15px]'>
                     Seus dados são seus
                   </Text>
                   <Text className='text-muted-foreground text-[13px] mt-1 leading-relaxed pr-2'>
@@ -304,7 +299,7 @@ export function Profile() {
             <Pressable
               onPress={handleExportData}
               className='flex-row items-center justify-between px-5 py-4 border-b border-surface-secondary active:bg-surface-secondary'>
-              <Text className='font-bold text-foreground text-[15px] pl-1'>
+              <Text className='  text-foreground text-[15px] pl-1'>
                 Exportar meus dados
               </Text>
               <HugeiconsIcon icon={Download04Icon} size={20} color='#64748B' />
@@ -312,7 +307,7 @@ export function Profile() {
             <Pressable
               onPress={handleDeleteAccount}
               className='flex-row items-center justify-between px-5 py-4 active:bg-red-50/50'>
-              <Text className='font-bold text-red-500 text-[15px] pl-1'>
+              <Text className='  text-red-500 text-[15px] pl-1'>
                 Excluir minha conta
               </Text>
               <HugeiconsIcon icon={Delete03Icon} size={20} color='#EF4444' />
@@ -330,9 +325,7 @@ export function Profile() {
             className='mt-2 h-14 rounded-full'>
             <View className='flex-row items-center gap-2'>
               <HugeiconsIcon icon={Logout03Icon} size={18} color='#64748B' />
-              <Text className='text-muted-foreground font-bold'>
-                Sair do App
-              </Text>
+              <Text className='text-muted-foreground  '>Sair do App</Text>
             </View>
           </Button>
         </MotiView>

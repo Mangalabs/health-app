@@ -81,8 +81,8 @@ function CustomTabBar({ state, descriptors, navigation }: BottomTabBarProps) {
                   className={cn(
                     'text-[10px]',
                     isFocused
-                      ? 'font-bold text-brand-purple'
-                      : 'font-medium text-muted-foreground',
+                      ? '  text-brand-purple'
+                      : '  text-muted-foreground',
                   )}>
                   {label as string}
                 </Text>
