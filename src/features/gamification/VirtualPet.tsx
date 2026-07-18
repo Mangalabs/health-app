@@ -74,7 +74,9 @@ export function VirtualPet({ className }: { className?: string }) {
         />
       </MotiView>
 
-      <Text className='  text-xl text-neutral-900 mt-2 z-10'>{petName}</Text>
+      <Text weight='semibold' className='text-xl text-neutral-900 mt-2 z-10'>
+        {petName}
+      </Text>
 
       <View className='w-full mt-4 space-y-1 z-10'>
         <View className='flex-row justify-between mb-1'>

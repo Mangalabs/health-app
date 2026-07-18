@@ -3,7 +3,7 @@ import { HugeiconsIcon } from '@hugeicons/react-native'
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import React from 'react'
 import { View } from 'react-native'
-import { healthApi } from '../../core/services/api'
+import { healthApi } from '../../core/services/api/client'
 import { Button } from '../../design-system/Button'
 import {
   Card,

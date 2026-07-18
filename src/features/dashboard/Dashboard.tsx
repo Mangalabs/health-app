@@ -3,7 +3,7 @@ import { MotiView } from 'moti'
 import React from 'react'
 import { ActivityIndicator, ScrollView, View } from 'react-native'
 import { healthApi } from '../../core/services/api'
-import { useGamificationStore } from '../gamification/store'
+import { useAuthStore } from '../../core/store/authStore' // <-- CORRIGIDO
 import { VirtualPet } from '../gamification/VirtualPet'
 import { ExerciseCard } from '../health-tracking/ExerciseCard'
 import { HydrationCard } from '../health-tracking/HydrationCard'
@@ -13,7 +13,8 @@ import { MedicationsCard } from '../medications/MedicationsCard'
 import { Text } from '../../design-system/Text'
 
 export function Dashboard() {
-  const { user } = useGamificationStore()
+  // Agora puxamos o usuário oficial autenticado
+  const { user } = useAuthStore()
 
   const {
     data: today,
@@ -35,7 +36,7 @@ export function Dashboard() {
   if (isError || !today) {
     return (
       <View className='flex-1 items-center justify-center bg-background'>
-        <Text className='text-destructive  '>Erro ao carregar dados.</Text>
+        <Text className='text-destructive'>Erro ao carregar dados do dia.</Text>
       </View>
     )
   }
@@ -47,7 +48,8 @@ export function Dashboard() {
     return 'Boa noite'
   }
 
-  const waterGoal = user.waterGoal || 2000
+  // Pegamos a meta do perfil real do banco
+  const waterGoal = user?.profile?.dailyHydrationGoal || 2000
 
   return (
     <View className='flex-1 bg-background'>
@@ -64,14 +66,14 @@ export function Dashboard() {
           <View accessibilityRole='header'>
             <Text
               weight='bold'
-              className=' text-red-600'
+              className='text-red-600'
               style={{ fontSize: 24 }}
               numberOfLines={1}
               adjustsFontSizeToFit>
-              {getGreeting()}, {user.name || 'Amigo(a)'}!
+              {getGreeting()}, {user?.profile?.name || 'Amigo(a)'}!
             </Text>
             <Text
-              className=' text-muted-foreground'
+              className='text-muted-foreground'
               style={{ fontSize: 14, marginTop: 4 }}>
               Pronto para cuidar de você hoje?
             </Text>

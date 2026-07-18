@@ -11,8 +11,10 @@ export interface MedicationFormData {
   name: string
   dosage: string
   stockCount: number
-  lowStockThreshold: number
   timeOfDay: string
+  color?: string
+  icon?: string
+  frequency?: string
 }
 
 interface MedicationsState {
@@ -38,18 +40,22 @@ const SEED_MEDICATIONS: Medication[] = [
     name: 'Vitamina C',
     dosage: '1000mg',
     stockCount: 5,
-    lowStockThreshold: 10,
     timeOfDay: '08:00',
     active: true,
+    color: '#E24A5C',
+    icon: 'pill',
+    frequency: 'DAILY',
   },
   {
     id: '2',
     name: 'Ômega 3',
     dosage: '1 cápsula',
     stockCount: 45,
-    lowStockThreshold: 15,
     timeOfDay: '12:00',
     active: true,
+    color: '#9D75CB',
+    icon: 'capsule',
+    frequency: 'DAILY',
   },
 ]
 
@@ -61,7 +67,14 @@ export const useMedicationsStore = create<MedicationsState>()(
 
       addMedication: (data) => {
         const id = `med_${Date.now()}`
-        const medication: Medication = { ...data, id, active: true }
+        const medication: Medication = {
+          ...data,
+          id,
+          active: true,
+          color: data.color || '#E24A5C',
+          icon: data.icon || 'pill',
+          frequency: data.frequency || 'DAILY',
+        }
         set((state) => ({ medications: [...state.medications, medication] }))
         return id
       },
@@ -97,16 +110,16 @@ export const useMedicationsStore = create<MedicationsState>()(
         const today = new Date().toISOString().split('T')[0]
         set((state) => {
           const filteredLogs = state.logs.filter(
-            (l) => !(l.medicationId === medicationId && l.date === today),
+            (l) => !(l.medicationId === medicationId && l.loggedAt === today),
           )
           const newLog: MedicationLog = {
             id: `log_${Date.now()}`,
             medicationId,
-            date: today,
+            loggedAt: today,
             status,
           }
           let medications = state.medications
-          if (status === 'taken') {
+          if (status === 'TAKEN') {
             medications = state.medications.map((m) =>
               m.id === medicationId
                 ? { ...m, stockCount: Math.max(0, m.stockCount - 1) }
@@ -120,7 +133,7 @@ export const useMedicationsStore = create<MedicationsState>()(
       getTodayLog: (medicationId) => {
         const today = new Date().toISOString().split('T')[0]
         return get().logs.find(
-          (l) => l.medicationId === medicationId && l.date === today,
+          (l) => l.medicationId === medicationId && l.loggedAt === today,
         )
       },
 

@@ -2,16 +2,19 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { Leaf01Icon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react-native'
 import { AnimatePresence, MotiView } from 'moti'
-import React from 'react'
+import React, { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
 import { KeyboardAvoidingView, Platform, ScrollView, View } from 'react-native'
 import { z } from 'zod'
+
 import { Button } from '../../design-system/Button'
 import { Input } from '../../design-system/Input'
-import { Typography } from '../../design-system/Typography'
-import { useGamificationStore } from '../gamification/store'
-
 import { Text } from '../../design-system/Text'
+import { Typography } from '../../design-system/Typography'
+
+import api from '../../core/services/api/client'
+import { useAuthStore } from '../../core/store/authStore'
+import { useGamificationStore } from '../gamification/store'
 
 const schema = z.object({
   name: z.string().min(2, 'O nome deve ter pelo menos 2 caracteres'),
@@ -22,6 +25,9 @@ type FormData = z.infer<typeof schema>
 
 export function Onboarding() {
   const { setUserData, setPetName } = useGamificationStore()
+  const { updateProfile } = useAuthStore()
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [apiError, setApiError] = useState<string | null>(null)
 
   const {
     control,
@@ -32,9 +38,30 @@ export function Onboarding() {
     mode: 'onChange',
   })
 
-  const onSubmit = (data: FormData) => {
-    setPetName(data.petName)
-    setUserData({ name: data.name, hasCompletedOnboarding: true })
+  const onSubmit = async (data: FormData) => {
+    setIsSubmitting(true)
+    setApiError(null)
+
+    try {
+      const response = await api.patch('/profile', {
+        name: data.name,
+        petName: data.petName,
+      })
+
+      const updatedProfile = response.data?.data
+        ? response.data.data
+        : response.data
+
+      setPetName(data.petName)
+      setUserData({ name: data.name, hasCompletedOnboarding: true })
+
+      await updateProfile(updatedProfile)
+    } catch (error) {
+      console.error('Erro ao atualizar perfil', error)
+      setApiError('Não foi possível salvar os dados. Tente novamente.')
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   return (
@@ -89,14 +116,9 @@ export function Onboarding() {
               />
               <AnimatePresence>
                 {errors.name && (
-                  <MotiView
-                    from={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: 20 }}
-                    exit={{ opacity: 0, height: 0 }}>
-                    <Text className='text-xs text-destructive mt-1'>
-                      {errors.name.message}
-                    </Text>
-                  </MotiView>
+                  <Text className='text-xs text-destructive mt-1'>
+                    {errors.name.message}
+                  </Text>
                 )}
               </AnimatePresence>
             </View>
@@ -113,7 +135,7 @@ export function Onboarding() {
                 name='petName'
                 render={({ field: { onChange, onBlur, value } }) => (
                   <Input
-                    placeholder='Ex: Nix, Apollo, Zoro, Amora'
+                    placeholder='Ex: Thor, Mia, Floquinho'
                     onBlur={onBlur}
                     onChangeText={onChange}
                     value={value}
@@ -123,23 +145,24 @@ export function Onboarding() {
               />
               <AnimatePresence>
                 {errors.petName && (
-                  <MotiView
-                    from={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: 20 }}
-                    exit={{ opacity: 0, height: 0 }}>
-                    <Text className='text-xs text-destructive mt-1'>
-                      {errors.petName.message}
-                    </Text>
-                  </MotiView>
+                  <Text className='text-xs text-destructive mt-1'>
+                    {errors.petName.message}
+                  </Text>
                 )}
               </AnimatePresence>
             </View>
 
+            {apiError && (
+              <Text className='text-sm text-center text-destructive mb-2 font-medium'>
+                {apiError}
+              </Text>
+            )}
+
             <Button
-              label='Começar minha jornada'
+              label={isSubmitting ? 'Salvando...' : 'Começar minha jornada'}
               className='w-full h-14 mt-4'
               onPress={handleSubmit(onSubmit)}
-              disabled={!isValid}
+              disabled={!isValid || isSubmitting}
             />
           </View>
         </MotiView>
