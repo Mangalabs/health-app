@@ -1,6 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Leaf01Icon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react-native'
+import { useRouter } from 'expo-router'
 import { AnimatePresence, MotiView } from 'moti'
 import React, { useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
@@ -24,6 +25,7 @@ const schema = z.object({
 type FormData = z.infer<typeof schema>
 
 export function Onboarding() {
+  const router = useRouter()
   const { setUserData, setPetName } = useGamificationStore()
   const { updateProfile } = useAuthStore()
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -56,6 +58,8 @@ export function Onboarding() {
       setUserData({ name: data.name, hasCompletedOnboarding: true })
 
       await updateProfile(updatedProfile)
+
+      router.replace('/(tabs)')
     } catch (error) {
       console.error('Erro ao atualizar perfil', error)
       setApiError('Não foi possível salvar os dados. Tente novamente.')

@@ -43,7 +43,7 @@ export default function RootLayout() {
       // 1. Não logado tentando acessar área interna -> Manda pro Login
       router.replace('/login')
     } else if (user) {
-      // 2. Logado: Avalia a completude do perfil
+      // 2. Logado: Avalia a completude do perfil de acordo com a tipagem estrita
       const hasCompletedOnboarding = Boolean(user.profile?.petName)
 
       if (!hasCompletedOnboarding && currentRoute !== 'onboarding') {
