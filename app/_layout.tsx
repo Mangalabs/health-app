@@ -11,7 +11,6 @@ import {
   PlusJakartaSans_700Bold,
 } from '@expo-google-fonts/plus-jakarta-sans'
 
-import '../global.css'
 import { useAuthStore } from '../src/core/store/authStore'
 
 const queryClient = new QueryClient()
