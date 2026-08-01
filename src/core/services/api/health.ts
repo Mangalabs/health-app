@@ -1,7 +1,6 @@
 import { HydrationLog, TodayOverview, WeightLog } from '../../models/types'
 import api from './client'
 
-// Helper para lidar com o "Duplo Data" do NestJS
 const extractData = (responseBody: any) => {
   return responseBody?.data ? responseBody.data : responseBody
 }
@@ -10,15 +9,15 @@ export const healthApi = {
   getTodayOverview: async (): Promise<TodayOverview> => {
     const { data: responseBody } = await api.get('/dashboard/summary')
     const payload = extractData(responseBody)
-
+    
     return {
-      // Usamos encadeamento opcional (?.) para evitar quebras se a API retornar vazio
-      hydrationGoal: payload?.profile?.dailyHydrationGoal || 2000,
-      hydrationCurrent: payload?.hydration?.current || 0,
-      exerciseCompleted: payload?.exercise?.done || false,
+      hydrationGoal: payload?.profile?.dailyHydrationGoal ?? 2000,
+      hydrationCurrent: payload?.hydration?.current ?? 0,
+      exerciseCompleted: payload?.exercise?.done ?? false,
     }
   },
 
+  // Endpoint de hidratação - espera { amountMl, loggedAt } de acordo com o schema
   addHydration: async (amountMl: number): Promise<void> => {
     await api.post('/hydration', {
       amountMl,
@@ -35,7 +34,8 @@ export const healthApi = {
 
   getWeightLogs: async (): Promise<WeightLog[]> => {
     const { data: responseBody } = await api.get('/weight/history')
-    return extractData(responseBody)
+    const result = extractData(responseBody)
+    return Array.isArray(result) ? result : []
   },
 
   addWeightLog: async (weightKg: number): Promise<void> => {
@@ -44,6 +44,7 @@ export const healthApi = {
 
   getHydrationLogs: async (): Promise<HydrationLog[]> => {
     const { data: responseBody } = await api.get('/hydration/history')
-    return extractData(responseBody)
+    const result = extractData(responseBody)
+    return Array.isArray(result) ? result : []
   },
 }
