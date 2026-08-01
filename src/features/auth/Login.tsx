@@ -142,7 +142,13 @@ export function Login({ initialTab = 'login' }: { initialTab?: AuthTab }) {
         <View className='absolute inset-0 bg-background overflow-hidden'>
           <LinearGradient
             colors={['rgba(255, 139, 167, 0.08)', 'rgba(157, 117, 203, 0.08)']}
-            className='absolute inset-0'
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+            }}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
           />
@@ -160,7 +166,18 @@ export function Login({ initialTab = 'login' }: { initialTab?: AuthTab }) {
               colors={['#FF8BA7', '#9D75CB']}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
-              className='w-[72px] h-[72px] rounded-3xl items-center justify-center shadow-lg'>
+              style={{
+                width: 72,
+                height: 72,
+                borderRadius: 24,
+                alignItems: 'center',
+                justifyContent: 'center',
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: 2 },
+                shadowOpacity: 0.2,
+                shadowRadius: 4,
+                elevation: 4,
+              }}>
               <Leaf size={32} color='#FFFFFF' />
             </LinearGradient>
           </MotiView>

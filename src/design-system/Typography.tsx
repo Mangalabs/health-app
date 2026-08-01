@@ -12,15 +12,19 @@ export const Typography = ({
   variant = 'body',
   weight,
   children,
+  style,
   ...props
 }: TypographyProps) => {
-  const baseStyles: Record<NonNullable<TypographyProps['variant']>, string> = {
-    h1: 'text-[1.5rem] leading-tight text-foreground',
-    h2: 'text-[1.25rem] leading-tight text-foreground',
-    h3: 'text-[1.125rem] leading-tight text-foreground',
-    h4: 'text-[1rem] leading-snug text-foreground',
-    body: 'text-[0.875rem] leading-normal text-foreground',
-    caption: 'text-[0.75rem] leading-normal text-foreground',
+  const baseStyles: Record<
+    NonNullable<TypographyProps['variant']>,
+    { fontSize: number; lineHeight: number }
+  > = {
+    h1: { fontSize: 24, lineHeight: 30 },
+    h2: { fontSize: 20, lineHeight: 26 },
+    h3: { fontSize: 18, lineHeight: 24 },
+    h4: { fontSize: 16, lineHeight: 22 },
+    body: { fontSize: 14, lineHeight: 20 },
+    caption: { fontSize: 12, lineHeight: 16 },
   }
 
   const weightStyles = {
@@ -29,14 +33,16 @@ export const Typography = ({
     bold: 'font-bold',
   }
 
+  const variantStyle = baseStyles[variant]
+
   return (
     <Text
       className={cn(
-        'font-sans',
-        baseStyles[variant],
-        weight ? weightStyles[weight] : undefined,
+        'text-foreground',
+        weight ? weightStyles[weight] : 'font-normal',
         className,
       )}
+      style={[variantStyle, style]}
       {...props}>
       {children}
     </Text>

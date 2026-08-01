@@ -15,7 +15,7 @@ import React, { useMemo, useState } from 'react'
 import { Pressable, ScrollView, View } from 'react-native'
 import { LineChart } from 'react-native-gifted-charts'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { MedicationLog } from '../../core/models/types'
+import { HydrationLog, MedicationLog, WeightLog } from '../../core/models/types'
 import { healthApi } from '../../core/services/api/client'
 import { Typography } from '../../design-system/Typography'
 import { cn } from '../../utils/formatters'
@@ -42,11 +42,11 @@ const MONTHS = [
 type DayAdherence = 'good' | 'partial' | 'missed' | 'none'
 
 function getAdherence(logs: MedicationLog[], dateStr: string): DayAdherence {
-  const dayLogs = logs.filter((l) => l.date === dateStr)
+  const dayLogs = logs.filter((l) => l.loggedAt === dateStr)
   if (dayLogs.length === 0) return 'none'
-  const allTaken = dayLogs.every((l) => l.status === 'taken')
+  const allTaken = dayLogs.every((l) => l.status === 'TAKEN')
   if (allTaken) return 'good'
-  const anyTaken = dayLogs.some((l) => l.status === 'taken')
+  const anyTaken = dayLogs.some((l) => l.status === 'TAKEN')
   if (anyTaken) return 'partial'
   return 'missed'
 }
@@ -92,15 +92,23 @@ export function Statistics() {
 
   const { logs } = useMedicationsStore()
 
-  const { data: weightLogs = [] } = useQuery({
+  const { data: rawWeightLogs } = useQuery({
     queryKey: ['weightLogs'],
     queryFn: healthApi.getWeightLogs,
   })
 
-  const { data: hydrationLogs = [] } = useQuery({
+  const { data: rawHydrationLogs } = useQuery({
     queryKey: ['hydrationLogs'],
     queryFn: healthApi.getHydrationLogs,
   })
+
+  // Prevenção de crashes caso a API retorne objetos aninhados ao invés de array
+  const weightLogs: WeightLog[] = Array.isArray(rawWeightLogs)
+    ? rawWeightLogs
+    : []
+  const hydrationLogs: HydrationLog[] = Array.isArray(rawHydrationLogs)
+    ? rawHydrationLogs
+    : []
 
   const year = viewDate.getFullYear()
   const month = viewDate.getMonth()
@@ -135,19 +143,17 @@ export function Statistics() {
     sevenDaysAgo.setDate(today.getDate() - 6)
     const map: Record<string, number> = {}
     hydrationLogs.forEach((l) => {
-      const d = new Date(l.date)
+      const d = new Date(l.loggedAt)
       if (d >= sevenDaysAgo && d <= today) {
-        map[l.date] = (map[l.date] || 0) + l.amountMl
+        map[l.loggedAt] = (map[l.loggedAt] || 0) + l.amountMl
       }
     })
     const days = Object.values(map)
     if (days.length === 0) return 0
     return Math.round(days.reduce((a, b) => a + b, 0) / 7)
-  }, [hydrationLogs])
+  }, [hydrationLogs, today])
 
   const hydrationChartData = useMemo(() => {
-    const sevenDaysAgo = new Date(today)
-    sevenDaysAgo.setDate(today.getDate() - 6)
     const map: Record<string, number> = {}
     for (let i = 0; i <= 6; i++) {
       const d = new Date(today)
@@ -156,20 +162,20 @@ export function Statistics() {
       map[str] = 0
     }
     hydrationLogs.forEach((l) => {
-      if (l.date in map) {
-        map[l.date] += l.amountMl
+      if (l.loggedAt in map) {
+        map[l.loggedAt] += l.amountMl
       }
     })
     return Object.entries(map).map(([date, ml]) => ({
       label: date.slice(8),
       value: ml,
     }))
-  }, [hydrationLogs])
+  }, [hydrationLogs, today])
 
   const weightChartData = useMemo(() => {
     return weightLogs
       .slice(-8)
-      .map((w) => ({ label: w.date.slice(8, 10), value: w.weightKg }))
+      .map((w) => ({ label: w.loggedAt.slice(8, 10), value: w.weightKg }))
   }, [weightLogs])
 
   const weightTrend = useMemo(() => {
@@ -224,7 +230,7 @@ export function Statistics() {
                       color='#9D75CB'
                     />
                   </View>
-                  <Text className='  text-brand-purple text-[16px]'>
+                  <Text className='text-brand-purple text-[16px]'>
                     Adesão Mensal
                   </Text>
                 </View>
@@ -240,7 +246,7 @@ export function Statistics() {
                     />
                   </Pressable>
                   <Text
-                    className='  text-foreground text-center'
+                    className='text-foreground text-center'
                     style={{ fontSize: 13, minWidth: 85 }}>
                     {MONTHS[month]} {year}
                   </Text>
@@ -262,7 +268,7 @@ export function Statistics() {
                 {WEEK_DAYS.map((d) => (
                   <Text
                     key={d}
-                    className='text-center   text-muted-foreground/60 w-[14%]'
+                    className='text-center text-muted-foreground/60 w-[14%]'
                     style={{ fontSize: 11, textTransform: 'uppercase' }}>
                     {d}
                   </Text>
@@ -328,7 +334,7 @@ export function Statistics() {
                         )}
                       />
                       <Text
-                        className='text-muted-foreground  '
+                        className='text-muted-foreground'
                         style={{ fontSize: 11 }}>
                         {ADHERENCE_LABELS[key]}
                       </Text>
@@ -356,12 +362,12 @@ export function Statistics() {
                       color='#9D75CB'
                     />
                   </View>
-                  <Text className='  text-brand-purple text-[16px]'>
+                  <Text className='text-brand-purple text-[16px]'>
                     Hidratação
                   </Text>
                 </View>
                 <View className='items-end'>
-                  <Text className='  text-brand-purple text-[15px]'>
+                  <Text className='text-brand-purple text-[15px]'>
                     {weeklyWaterAvg} ml
                   </Text>
                   <Text
@@ -415,7 +421,7 @@ export function Statistics() {
                       color='#FF8BA7'
                     />
                   </View>
-                  <Text className='  text-brand-pink text-[16px]'>
+                  <Text className='text-brand-pink text-[16px]'>
                     Peso Corporal
                   </Text>
                 </View>

@@ -32,27 +32,26 @@ export default function RootLayout() {
   }, [])
 
   useEffect(() => {
-    // Só toma decisões se as fontes carregaram e o AuthStore parou de carregar
     if (isLoading || !loaded) return
 
     const currentRoute = segments[0] as string | undefined
     const isAuthRoute = currentRoute === 'login' || currentRoute === 'register'
 
     if (!user && !isAuthRoute) {
-      // 1. Não logado tentando acessar área interna -> Manda pro Login
       router.replace('/login')
     } else if (user) {
-      // 2. Logado: Avalia a completude do perfil de acordo com a tipagem estrita
-      const hasCompletedOnboarding = Boolean(user.profile?.petName)
+      // O backend retorna 'Nix' como padrão para petName quando o pet ainda não foi cadastrado.
+      // Consideramos que o onboarding está completo apenas se petName não for 'Nix'.
+      const hasCompletedOnboarding = Boolean(
+        user.profile?.petName && user.profile.petName !== 'Nix',
+      )
 
       if (!hasCompletedOnboarding && currentRoute !== 'onboarding') {
-        // Logado, MAS falta preencher o pet -> Trava no Onboarding
         router.replace('/onboarding')
       } else if (
         hasCompletedOnboarding &&
         (isAuthRoute || currentRoute === 'onboarding')
       ) {
-        // Logado E completou onboarding tentando ver Login/Onboarding -> Manda pra Home
         router.replace('/(tabs)')
       }
     }

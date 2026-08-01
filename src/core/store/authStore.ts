@@ -1,5 +1,6 @@
 import { isAxiosError } from 'axios'
 import { create } from 'zustand'
+import { useGamificationStore } from '../../features/gamification/store'
 import { LoginDto, Profile, RegisterDto, User } from '../models/types'
 import { authService } from '../services/api/auth'
 import api from '../services/api/client'
@@ -32,31 +33,35 @@ export const useAuthStore = create<AuthState>((set, get) => ({
 
   clearSession: async () => {
     await storage.clearAllSensitives()
+    useGamificationStore.getState().reset()
     set({ user: null, error: 'Sessão expirada. Faça login novamente.', isLoading: false })
   },
 
   checkAuth: async () => {
-    set({ isLoading: true }) 
+    set({ isLoading: true })
     try {
       const savedUser = await storage.getUser()
       const token = await storage.getToken()
 
       if (savedUser && token && token !== 'undefined') {
         try {
-          // Busca os dados FRESCOS do perfil no banco para não perder o Pet!
           const response = await api.get('/profile', {
             headers: { Authorization: `Bearer ${token}` }
           })
-          
-          const freshProfile = response.data?.data || response.data;
-          const fullUser = { ...savedUser, profile: freshProfile };
-          
-          await storage.setUser(fullUser);
+
+          const freshProfile = response.data?.data || response.data
+          const fullUser = { ...savedUser, profile: freshProfile }
+
+          await storage.setUser(fullUser)
+          useGamificationStore.getState().syncWithProfile(freshProfile)
           set({ user: fullUser, isLoading: false })
         } catch (error: unknown) {
           if (isAxiosError(error) && error.response?.status === 401) {
             await get().clearSession()
           } else {
+            if (savedUser.profile) {
+              useGamificationStore.getState().syncWithProfile(savedUser.profile)
+            }
             set({ user: savedUser, isLoading: false })
           }
         }
@@ -72,17 +77,20 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     set({ isLoading: true, error: null })
     try {
       const response = await authService.login(credentials)
-      
-      // Logo após o login, buscamos o perfil ativamente para garantir que temos o pet
+
       try {
-         const profileRes = await api.get('/profile')
-         const freshProfile = profileRes.data?.data || profileRes.data
-         const fullUser = { ...response.user, profile: freshProfile }
-         
-         await storage.setUser(fullUser)
-         set({ user: fullUser, isLoading: false })
+        const profileRes = await api.get('/profile')
+        const freshProfile = profileRes.data?.data || profileRes.data
+        const fullUser = { ...response.user, profile: freshProfile }
+
+        await storage.setUser(fullUser)
+        useGamificationStore.getState().syncWithProfile(freshProfile)
+        set({ user: fullUser, isLoading: false })
       } catch (e) {
-         set({ user: response.user, isLoading: false })
+        if (response.user.profile) {
+          useGamificationStore.getState().syncWithProfile(response.user.profile)
+        }
+        set({ user: response.user, isLoading: false })
       }
     } catch (error) {
       set({ error: extractErrorMessage(error), isLoading: false })
@@ -94,17 +102,16 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     set({ isLoading: true, error: null })
     try {
       const response = await authService.register(data)
-      
-      try {
-         const profileRes = await api.get('/profile')
-         const freshProfile = profileRes.data?.data || profileRes.data
-         const fullUser = { ...response.user, profile: freshProfile }
-         
-         await storage.setUser(fullUser)
-         set({ user: fullUser, isLoading: false })
-      } catch (e) {
-         set({ user: response.user, isLoading: false })
+
+      // O backend retorna 'Nix' como padrão para petName.
+      // A sincronização com a gamificação tratará esse valor como "sem pet".
+      if (response.user.profile) {
+        useGamificationStore.getState().syncWithProfile(response.user.profile)
+      } else {
+        useGamificationStore.getState().setPetName('')
       }
+
+      set({ user: response.user, isLoading: false })
     } catch (error) {
       set({ error: extractErrorMessage(error), isLoading: false })
       throw error
@@ -117,6 +124,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       const updatedUser = { ...currentUser, profile }
       set({ user: updatedUser })
       await storage.setUser(updatedUser)
+      useGamificationStore.getState().syncWithProfile(profile)
     }
   },
 
@@ -125,6 +133,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     try {
       await authService.logout()
     } catch (error) {}
+    useGamificationStore.getState().reset()
     await get().clearSession()
   },
 }))

@@ -150,7 +150,12 @@ export function Profile() {
             colors={['#FFF0F3', '#F4EBFF']}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
-            className='flex-col items-center py-8 px-6'>
+            style={{
+              flexDirection: 'column',
+              alignItems: 'center',
+              paddingVertical: 32,
+              paddingHorizontal: 24,
+            }}>
             <View className='w-24 h-24 mb-4 rounded-full bg-white p-1 shadow-sm'>
               <View className='flex-1 rounded-full bg-brand-purple items-center justify-center'>
                 <Text className='  text-white text-2xl tracking-widest'>

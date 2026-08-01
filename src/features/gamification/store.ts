@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { create } from 'zustand'
 import { createJSONStorage, persist } from 'zustand/middleware'
+import { Profile } from '../../core/models/types'
 
 type PetState = 'happy' | 'neutral' | 'sleepy'
 
@@ -25,23 +26,29 @@ interface GamificationState {
   updateStreak: (currentDate: string) => void
   setPetState: (state: PetState) => void
   setWaterGoal: (goal: number) => void
+  syncWithProfile: (profile: Profile) => void
+  reset: () => void
+}
+
+const initialState = {
+  user: {
+    name: '',
+    hasCompletedOnboarding: false,
+    waterGoal: 2000,
+  },
+  petState: 'happy' as PetState,
+  petName: '',
+  xp: 0,
+  level: 1,
+  streak: 0,
+  maxStreak: 0,
+  lastActiveDate: null,
 }
 
 export const useGamificationStore = create<GamificationState>()(
   persist(
     (set, get) => ({
-      user: {
-        name: '',
-        hasCompletedOnboarding: false,
-        waterGoal: 2000,
-      },
-      petState: 'happy',
-      petName: 'Amora',
-      xp: 0,
-      level: 1,
-      streak: 0,
-      maxStreak: 0,
-      lastActiveDate: null,
+      ...initialState,
 
       setUserData: (data) =>
         set((state) => ({ user: { ...state.user, ...data } })),
@@ -96,6 +103,21 @@ export const useGamificationStore = create<GamificationState>()(
         }),
 
       setPetState: (state) => set({ petState: state }),
+
+      syncWithProfile: (profile: Profile) => {
+        set({
+          petName: profile.petName || '',
+          user: {
+            ...get().user,
+            name: profile.name || '',
+            waterGoal: profile.dailyHydrationGoal || 2000,
+          },
+        })
+      },
+
+      reset: () => {
+        set(initialState)
+      },
     }),
     {
       name: 'healthy-gamification-storage',

@@ -23,6 +23,21 @@ function getPetImage(petState: string) {
 export function VirtualPet({ className }: { className?: string }) {
   const { petState, petName, xp, level, streak } = useGamificationStore()
 
+  // Fallback: se não há pet definido, exibe mensagem educativa
+  if (!petName) {
+    return (
+      <View
+        className={cn(
+          'items-center bg-purple-50 p-6 rounded-[32px] shadow-sm',
+          className,
+        )}>
+        <Text className='text-muted-foreground text-center'>
+          Adicione um pet para começar sua jornada!
+        </Text>
+      </View>
+    )
+  }
+
   const getPetAnimation = () => {
     switch (petState) {
       case 'happy':
@@ -49,11 +64,11 @@ export function VirtualPet({ className }: { className?: string }) {
       <View className='flex-row w-full justify-between items-center mb-4 z-10'>
         <View className='bg-white/80 px-3 py-1 rounded-full flex-row items-center gap-1.5'>
           <HugeiconsIcon icon={Fire02Icon} size={20} color='#F59E0B' />
-          <Text className='text-sm   text-purple-600'>{streak} Dias</Text>
+          <Text className='text-sm text-purple-600'>{streak} Dias</Text>
         </View>
         <View className='bg-white/80 px-3 py-1 rounded-full flex-row items-center gap-1.5'>
           <HugeiconsIcon icon={Rocket02Icon} size={20} color='#9D75CB' />
-          <Text className='text-sm   text-purple-600'>Nvl {level}</Text>
+          <Text className='text-sm text-purple-600'>Nvl {level}</Text>
         </View>
       </View>
 
@@ -80,8 +95,8 @@ export function VirtualPet({ className }: { className?: string }) {
 
       <View className='w-full mt-4 space-y-1 z-10'>
         <View className='flex-row justify-between mb-1'>
-          <Text className='text-xs   text-neutral-500'>XP</Text>
-          <Text className='text-xs   text-neutral-500'>
+          <Text className='text-xs text-neutral-500'>XP</Text>
+          <Text className='text-xs text-neutral-500'>
             {xp} / {level * 100}
           </Text>
         </View>

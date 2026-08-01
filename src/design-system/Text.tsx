@@ -1,3 +1,4 @@
+import React from 'react'
 import { Text as RNText, TextProps as RNTextProps } from 'react-native'
 import { cn } from '../utils/formatters'
 
