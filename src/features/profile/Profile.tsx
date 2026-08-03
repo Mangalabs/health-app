@@ -340,7 +340,7 @@ export function Profile() {
             variant='ghost'
             onPress={handleLogout}
             className='mt-2 h-14 rounded-full'>
-            <View className='flex-row items-center gap-2'>
+            <View className='flex-row items-center'>
               <HugeiconsIcon icon={Logout03Icon} size={18} color='#64748B' />
               <Text className='text-muted-foreground'>Sair do App</Text>
             </View>

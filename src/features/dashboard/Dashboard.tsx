@@ -3,7 +3,7 @@ import { MotiView } from 'moti'
 import React from 'react'
 import { ActivityIndicator, ScrollView, View } from 'react-native'
 import { healthApi } from '../../core/services/api'
-import { useAuthStore } from '../../core/store/authStore' // <-- CORRIGIDO
+import { useAuthStore } from '../../core/store/authStore'
 import { VirtualPet } from '../gamification/VirtualPet'
 import { ExerciseCard } from '../health-tracking/ExerciseCard'
 import { HydrationCard } from '../health-tracking/HydrationCard'
@@ -13,7 +13,6 @@ import { MedicationsCard } from '../medications/MedicationsCard'
 import { Text } from '../../design-system/Text'
 
 export function Dashboard() {
-  // Agora puxamos o usuário oficial autenticado
   const { user } = useAuthStore()
 
   const {
@@ -48,7 +47,6 @@ export function Dashboard() {
     return 'Boa noite'
   }
 
-  // Pegamos a meta do perfil real do banco
   const waterGoal = user?.profile?.dailyHydrationGoal || 2000
 
   return (

@@ -15,7 +15,7 @@ interface AuthState {
   register: (data: RegisterDto) => Promise<void>
   logout: () => Promise<void>
   updateProfile: (profile: Profile) => Promise<void>
-  clearSession: () => Promise<void>
+  clearSession: (expired?: boolean) => Promise<void>
 }
 
 const extractErrorMessage = (error: unknown): string => {
@@ -31,10 +31,14 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   isLoading: true,
   error: null,
 
-  clearSession: async () => {
+  clearSession: async (expired = false) => {
     await storage.clearAllSensitives()
     useGamificationStore.getState().reset()
-    set({ user: null, error: 'Sessão expirada. Faça login novamente.', isLoading: false })
+    set({ 
+      user: null, 
+      error: expired ? 'Sessão expirada. Faça login novamente.' : null, 
+      isLoading: false 
+    })
   },
 
   checkAuth: async () => {
@@ -57,7 +61,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
           set({ user: fullUser, isLoading: false })
         } catch (error: unknown) {
           if (isAxiosError(error) && error.response?.status === 401) {
-            await get().clearSession()
+            await get().clearSession(true)
           } else {
             if (savedUser.profile) {
               useGamificationStore.getState().syncWithProfile(savedUser.profile)
