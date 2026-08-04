@@ -32,7 +32,6 @@ export function HydrationCard({
   const mutation = useMutation({
     mutationFn: (amount: number) => healthApi.addHydration(amount),
     onSuccess: () => {
-      // Invalida a query do dashboard para atualizar o current
       queryClient.invalidateQueries({ queryKey: ['today'] })
       addXp(10)
       updateStreak(new Date().toISOString().split('T')[0])
@@ -60,38 +59,48 @@ export function HydrationCard({
   }
 
   return (
-    <Card>
-      <CardHeader className='pb-2'>
+    <Card 
+      className="bg-white shadow-sm border border-border/60 my-4"
+      style={{
+        // Formato irregular de nuvem/gota
+        borderTopLeftRadius: 48,
+        borderTopRightRadius: 24,
+        borderBottomRightRadius: 48,
+        borderBottomLeftRadius: 32,
+        overflow: 'hidden'
+      }}
+    >
+      <CardHeader className='pb-2 pt-5 pl-6'>
         <View className='flex-row items-center gap-2'>
-          <HugeiconsIcon icon={GlassWaterIcon} size={30} color='#9D75CB' />
+          <HugeiconsIcon icon={GlassWaterIcon} size={28} color='#9D75CB' />
           <CardTitle className='text-brand-purple'>Hidratação</CardTitle>
         </View>
         <CardDescription>Meta: {goal}ml / dia</CardDescription>
       </CardHeader>
-      <CardContent className='flex-col items-center gap-4'>
+      <CardContent className='flex-col items-center gap-4 pb-6'>
         <ProgressRing progress={progress} size={120} color='#9D75CB'>
           <Text className='text-2xl text-foreground'>{current}</Text>
           <Text className='text-xs text-muted-foreground'>ml</Text>
         </ProgressRing>
 
-        <View className='flex-row flex-wrap justify-center gap-2 w-full mt-2'>
+        <View className='flex-row flex-wrap justify-center gap-3 w-full mt-2 px-2'>
           <Button
             variant='secondary'
-            className='flex-1 min-w-[100px] bg-brand-lilac/20'
+            className='flex-1 min-w-[100px] bg-brand-lilac/10 rounded-full h-12'
             onPress={() => handleAddWater(200)}
             disabled={mutation.isPending}
             accessibilityLabel='Adicionar 200 ml de água'>
-            <Text className='text-sm text-brand-purple'>
+            <Text className='text-sm font-medium text-brand-purple'>
               {mutation.isPending ? 'Salvando...' : '+ 200ml'}
             </Text>
           </Button>
           <Button
             variant='secondary'
-            className='flex-1 min-w-[100px] bg-brand-lilac/20'
+            className='flex-1 min-w-[100px] bg-brand-lilac/10 rounded-full h-12'
             onPress={() => handleAddWater(500)}
             disabled={mutation.isPending}
             accessibilityLabel='Adicionar 500 ml de água'>
-            <Text className='text-sm text-brand-purple'>
+            <Text className='text-sm font-medium text-brand-purple'>
               {mutation.isPending ? 'Salvando...' : '+ 500ml'}
             </Text>
           </Button>

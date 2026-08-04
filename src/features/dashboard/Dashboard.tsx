@@ -26,16 +26,16 @@ export function Dashboard() {
 
   if (isLoading) {
     return (
-      <View className='flex-1 w-full items-center justify-center bg-background'>
-        <ActivityIndicator size='large' color='#9D75CB' />
+      <View className="flex-1 w-full items-center justify-center bg-background">
+        <ActivityIndicator size="large" color="#9D75CB" />
       </View>
     )
   }
 
   if (isError || !today) {
     return (
-      <View className='flex-1 items-center justify-center bg-background'>
-        <Text className='text-destructive'>Erro ao carregar dados do dia.</Text>
+      <View className="flex-1 items-center justify-center bg-background">
+        <Text className="text-destructive">Erro ao carregar dados do dia.</Text>
       </View>
     )
   }
@@ -50,29 +50,32 @@ export function Dashboard() {
   const waterGoal = user?.profile?.dailyHydrationGoal || 2000
 
   return (
-    <View className='flex-1 bg-background'>
+    <View className="flex-1 bg-background">
       <View
-        className='absolute top-0 left-0 w-full h-64 bg-brand-lilac/10'
-        pointerEvents='none'
+        className="absolute top-0 left-0 w-full h-64 bg-brand-lilac/10"
+        pointerEvents="none"
       />
 
       <ScrollView
-        className='flex-1'
+        className="flex-1"
         contentContainerStyle={{ paddingBottom: 112 }}
-        showsVerticalScrollIndicator={false}>
-        <View className='w-full max-w-[448px] self-center px-4 pt-10 pb-6 flex-col gap-6'>
-          <View accessibilityRole='header'>
+        showsVerticalScrollIndicator={false}
+      >
+        <View className="w-full max-w-[448px] self-center px-4 pt-10 pb-6 flex-col gap-8">
+          <View accessibilityRole="header">
             <Text
-              weight='bold'
-              className='text-red-600'
-              style={{ fontSize: 24 }}
+              weight="bold"
+              className="text-brand-purple"
+              style={{ fontSize: 28 }}
               numberOfLines={1}
-              adjustsFontSizeToFit>
+              adjustsFontSizeToFit
+            >
               {getGreeting()}, {user?.profile?.name || 'Amigo(a)'}!
             </Text>
             <Text
-              className='text-muted-foreground'
-              style={{ fontSize: 14, marginTop: 4 }}>
+              className="text-muted-foreground"
+              style={{ fontSize: 15, marginTop: 4 }}
+            >
               Pronto para cuidar de você hoje?
             </Text>
           </View>
@@ -80,15 +83,17 @@ export function Dashboard() {
           <MotiView
             from={{ opacity: 0, translateY: 20 }}
             animate={{ opacity: 1, translateY: 0 }}
-            transition={{ type: 'timing', duration: 450 }}>
+            transition={{ type: 'timing', duration: 450 }}
+          >
             <VirtualPet />
           </MotiView>
 
           <MotiView
-            className='flex-col gap-4'
+            className="flex-col gap-y-6"
             from={{ opacity: 0, translateY: 20 }}
             animate={{ opacity: 1, translateY: 0 }}
-            transition={{ type: 'timing', duration: 450, delay: 100 }}>
+            transition={{ type: 'timing', duration: 450, delay: 100 }}
+          >
             <MedicationsCard />
             <HydrationCard current={today.hydrationCurrent} goal={waterGoal} />
             <ExerciseCard completed={today.exerciseCompleted} />

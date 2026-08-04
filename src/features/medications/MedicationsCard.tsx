@@ -63,22 +63,31 @@ export function MedicationsCard() {
   }
 
   return (
-    <Card>
-      <CardHeader className='pb-2'>
+    <Card 
+      className="bg-white shadow-sm border border-border/60 my-4"
+      style={{
+        borderTopLeftRadius: 32,
+        borderTopRightRadius: 48,
+        borderBottomRightRadius: 24,
+        borderBottomLeftRadius: 40,
+        overflow: 'hidden'
+      }}
+    >
+      <CardHeader className='pb-2 pt-5 pl-6'>
         <View className='flex-row items-start justify-between gap-2'>
           <View className='flex-row items-center gap-2 flex-1 pr-2'>
             <HugeiconsIcon
               icon={PillBottleIcon}
-              size={30}
+              size={28}
               color='#10B981'
               style={{ marginTop: 2 }}
             />
             <View className='flex-1'>
               <CardTitle
-                className='text-[#10B981] '
+                className='text-[#10B981]'
                 numberOfLines={2}
                 adjustsFontSizeToFit>
-                Vitaminas & Medicamentos
+                Vitaminas & Meds
               </CardTitle>
             </View>
           </View>
@@ -87,7 +96,7 @@ export function MedicationsCard() {
             onPress={() => router.push('/medications/list' as Href)}
             accessibilityLabel='Gerenciar medicamentos'
             className='flex-shrink-0 pt-1'>
-            <Text className='text-brand-purple  ' style={{ fontSize: 12 }}>
+            <Text className='text-brand-purple font-medium' style={{ fontSize: 13 }}>
               Gerenciar
             </Text>
           </Pressable>
@@ -97,11 +106,11 @@ export function MedicationsCard() {
         </CardDescription>
       </CardHeader>
 
-      <CardContent>
+      <CardContent className="pb-6">
         {medications.length === 0 ? (
           <EmptyState />
         ) : (
-          <View className='space-y-3 gap-3'>
+          <View className='space-y-3 gap-3 mt-2'>
             {medications.map((med) => {
               const isLowStock = med.stockCount <= med.lowStockThreshold
               const isOutOfStock = med.stockCount === 0
@@ -112,15 +121,22 @@ export function MedicationsCard() {
               return (
                 <View key={med.id} className='z-10'>
                   <MotiView
+                    style={{
+                      // Itens em formato de pílulas irregulares
+                      borderTopLeftRadius: 24,
+                      borderTopRightRadius: 16,
+                      borderBottomRightRadius: 24,
+                      borderBottomLeftRadius: 16,
+                    }}
                     className={cn(
-                      'flex-row items-center justify-between p-3 rounded-2xl border border-border bg-surface-secondary',
-                      isDone && 'opacity-50',
+                      'flex-row items-center justify-between p-3 border border-border/80 bg-surface-secondary',
+                      isDone && 'opacity-60',
                     )}>
-                    <View className='flex-col flex-1 flex-shrink-1 mr-3'>
+                    <View className='flex-col flex-1 flex-shrink-1 mr-3 pl-1'>
                       <View className='flex-row items-center flex-wrap gap-x-2 gap-y-1 mb-1.5'>
                         <Text
-                          className='  text-foreground flex-shrink-1'
-                          style={{ fontSize: 14 }}
+                          className='text-foreground font-medium flex-shrink-1'
+                          style={{ fontSize: 15 }}
                           numberOfLines={1}
                           ellipsizeMode='tail'>
                           {med.name}
@@ -137,7 +153,7 @@ export function MedicationsCard() {
                               statusBadge.bg,
                             )}>
                             <Text
-                              className={cn(' ', statusBadge.color)}
+                              className={cn('font-medium', statusBadge.color)}
                               style={{ fontSize: 10 }}>
                               {statusBadge.label}
                             </Text>
@@ -146,23 +162,22 @@ export function MedicationsCard() {
                       </View>
 
                       <View className='flex-row items-center gap-2 flex-wrap'>
-                        <View className='bg-white px-2 py-0.5 rounded-md shadow-sm border border-border'>
+                        <View className='bg-white px-2.5 py-1 rounded-full shadow-sm border border-border/50'>
                           <Text
                             className='text-muted-foreground'
-                            style={{ fontSize: 12 }}>
+                            style={{ fontSize: 11 }}>
                             {med.timeOfDay}
                           </Text>
                         </View>
                         <Text
                           className={cn(
-                            ' ',
                             isOutOfStock
-                              ? 'text-destructive'
+                              ? 'text-destructive font-medium'
                               : isLowStock
-                                ? 'text-feedback-warning'
+                                ? 'text-feedback-warning font-medium'
                                 : 'text-muted-foreground',
                           )}
-                          style={{ fontSize: 12 }}>
+                          style={{ fontSize: 11 }}>
                           {isOutOfStock
                             ? 'Sem estoque'
                             : `${med.stockCount} restantes`}
@@ -176,13 +191,12 @@ export function MedicationsCard() {
                           onPress={() =>
                             setOpenMenuId(openMenuId === med.id ? null : med.id)
                           }
-                          className='w-10 h-10 items-center justify-center rounded-xl'
-                          accessibilityRole='button'
-                          accessibilityLabel='Mais opções do medicamento'>
+                          className='w-10 h-10 items-center justify-center rounded-full'
+                          accessibilityRole='button'>
                           <HugeiconsIcon
                             icon={MoreVerticalCircle01Icon}
-                            size={28}
-                            color='#64748B'
+                            size={26}
+                            color='#94A3B8'
                           />
                         </Pressable>
 
@@ -190,7 +204,7 @@ export function MedicationsCard() {
                           size='icon'
                           variant='success'
                           className={cn(
-                            'rounded-lg w-11 h-11',
+                            'rounded-full w-12 h-12 shadow-sm',
                             isOutOfStock && 'opacity-50',
                           )}
                           onPress={() => !isOutOfStock && handleTake(med.id)}
@@ -212,13 +226,13 @@ export function MedicationsCard() {
                         from={{ opacity: 0, height: 0, translateY: -10 }}
                         animate={{ opacity: 1, height: 80, translateY: 0 }}
                         exit={{ opacity: 0, height: 0, translateY: -10 }}
-                        className='overflow-hidden bg-white border border-border rounded-b-2xl -mt-2  z-0 shadow-sm'>
+                        className='overflow-hidden bg-white border border-border/80 rounded-b-3xl -mt-4 pt-4 z-[-1] shadow-sm'>
                         <Pressable
                           onPress={() => handleSkip(med.id)}
-                          className='flex-row items-center gap-2 px-4 py-2 border-b border-border'>
+                          className='flex-row items-center gap-2 px-5 py-2.5 border-b border-border/50'>
                           <HugeiconsIcon
                             icon={Forward01Icon}
-                            size={14}
+                            size={16}
                             color='#64748B'
                           />
                           <Text
@@ -229,16 +243,16 @@ export function MedicationsCard() {
                         </Pressable>
                         <Pressable
                           onPress={() => handleLate(med.id)}
-                          className='flex-row items-center gap-2 px-4 py-2'>
+                          className='flex-row items-center gap-2 px-5 py-2.5'>
                           <HugeiconsIcon
                             icon={ClockAlertIcon}
-                            size={14}
+                            size={16}
                             color='#D97706'
                           />
                           <Text
                             className='text-amber-600'
                             style={{ fontSize: 14 }}>
-                            Atrasado
+                            Marcar como atrasado
                           </Text>
                         </Pressable>
                       </MotiView>

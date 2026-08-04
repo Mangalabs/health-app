@@ -16,7 +16,7 @@ export const useWeightStore = create<WeightState>()(
       addOrUpdateWeight: (weightKg) => {
         const today = new Date().toISOString().split('T')[0]
         set((state) => {
-          const existingIndex = state.logs.findIndex((l) => l.date === today)
+          const existingIndex = state.logs.findIndex((l) => l.loggedAt === today)
           if (existingIndex >= 0) {
             const newLogs = [...state.logs]
             newLogs[existingIndex] = { ...newLogs[existingIndex], weightKg }
@@ -25,7 +25,7 @@ export const useWeightStore = create<WeightState>()(
           return {
             logs: [
               ...state.logs,
-              { id: `w_${Date.now()}`, date: today, weightKg },
+              { id: `w_${Date.now()}`, loggedAt: today, weightKg },
             ],
           }
         })
