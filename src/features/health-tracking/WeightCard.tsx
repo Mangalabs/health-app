@@ -1,8 +1,10 @@
 import { HistoryIcon, WeightScaleIcon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react-native'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import React, { useMemo, useState } from 'react'
 import { View } from 'react-native'
 import Toast from 'react-native-toast-message'
+import { healthApi } from '../../core/services/api'
 import { Button } from '../../design-system/Button'
 import {
   Card,
@@ -12,7 +14,6 @@ import {
   CardTitle,
 } from '../../design-system/Card'
 import { Input } from '../../design-system/Input'
-import { useWeightStore } from './store'
 
 import { Text } from '../../design-system/Text'
 
@@ -24,20 +25,52 @@ const formatShortDate = (dateStr?: string) => {
   return `${d}/${m}`
 }
 
+const getTodayDate = () => new Date().toISOString().split('T')[0]
+
+const normalizeDateString = (value: string) => value.split('T')[0]
+
 export function WeightCard() {
-  const logs = useWeightStore((state) => state.logs)
-  const addOrUpdateWeight = useWeightStore((state) => state.addOrUpdateWeight)
+  const queryClient = useQueryClient()
+  const { data: logs = [] } = useQuery({
+    queryKey: ['weightLogs'],
+    queryFn: healthApi.getWeightLogs,
+  })
 
-  const today = useMemo(() => new Date().toISOString().split('T')[0], [])
+  const mutation = useMutation({
+    mutationFn: (weightKg: number) => healthApi.addWeightLog(weightKg),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['weightLogs'] })
+      Toast.show({
+        type: 'success',
+        text1: 'Peso sincronizado',
+        text2: 'Registro enviado ao servidor com sucesso.',
+      })
+    },
+    onError: (error: unknown) => {
+      const message =
+        typeof error === 'object' && error !== null && 'message' in error
+          ? String((error as { message: unknown }).message)
+          : 'Não foi possível sincronizar com o servidor.'
+      Toast.show({
+        type: 'error',
+        text1: 'Falha ao sincronizar',
+        text2: message,
+      })
+    },
+  })
 
-  const todayLog = logs.find((l) => l.loggedAt === today)
+  const today = useMemo(getTodayDate, [])
+
+  const todayLog = logs.find((l) => normalizeDateString(l.loggedAt) === today)
 
   const lastLog = useMemo(() => {
     return [...logs]
-      .filter((l) => l.loggedAt && l.loggedAt !== today)
+      .filter((l) => normalizeDateString(l.loggedAt) !== today)
       .sort(
-        (a, b) => new Date(b.loggedAt).getTime() - new Date(a.loggedAt).getTime(),
-      )[0]
+        (a, b) =>
+          new Date(a.loggedAt).getTime() - new Date(b.loggedAt).getTime(),
+      )
+      .pop()
   }, [logs, today])
 
   const [weightInput, setWeightInput] = useState('')
@@ -46,34 +79,29 @@ export function WeightCard() {
     const cleanValue = weightInput.replace(',', '.')
     const val = parseFloat(cleanValue)
 
-    if (!isNaN(val) && val > 0) {
-      addOrUpdateWeight(val)
-      setWeightInput('')
-      Toast.show({
-        type: 'success',
-        text1: 'Peso atualizado!',
-        text2: `${val} kg registrado com sucesso.`,
-      })
-    } else {
+    if (!Number.isFinite(val) || val <= 0) {
       Toast.show({
         type: 'error',
         text1: 'Valor inválido',
-        text2: 'Insira um peso numérico (ex: 68.5).',
+        text2: 'Insira um peso numérico maior que zero (ex: 68.5).',
       })
+      return
     }
+
+    mutation.mutate(val)
+    setWeightInput('')
   }
 
   return (
     <Card
-      className="bg-white shadow-sm border border-border/60 mt-4 mb-8"
+      className='bg-white shadow-sm border border-border/60 mt-4 mb-8'
       style={{
         borderTopLeftRadius: 40,
         borderTopRightRadius: 24,
         borderBottomRightRadius: 40,
         borderBottomLeftRadius: 32,
-        overflow: 'hidden'
-      }}
-    >
+        overflow: 'hidden',
+      }}>
       <CardHeader className='pb-2 pt-5 pl-6'>
         <View className='flex-row items-center gap-2'>
           <HugeiconsIcon icon={WeightScaleIcon} size={24} color='#9D75CB' />
@@ -84,10 +112,14 @@ export function WeightCard() {
 
       <CardContent className='pt-2 space-y-4 pb-6'>
         <View className='flex-row gap-3 px-2'>
-          <View 
-            style={{ borderTopLeftRadius: 28, borderTopRightRadius: 16, borderBottomRightRadius: 28, borderBottomLeftRadius: 16 }}
-            className='flex-1 bg-brand-lilac/10 border border-brand-lilac/20 p-4 shadow-sm'
-          >
+          <View
+            style={{
+              borderTopLeftRadius: 28,
+              borderTopRightRadius: 16,
+              borderBottomRightRadius: 28,
+              borderBottomLeftRadius: 16,
+            }}
+            className='flex-1 bg-brand-lilac/10 border border-brand-lilac/20 p-4 shadow-sm'>
             <Text className='text-muted-foreground text-[11px] uppercase font-bold mb-1'>
               Hoje
             </Text>
@@ -96,10 +128,14 @@ export function WeightCard() {
             </Text>
           </View>
 
-          <View 
-            style={{ borderTopLeftRadius: 16, borderTopRightRadius: 28, borderBottomRightRadius: 16, borderBottomLeftRadius: 28 }}
-            className='flex-1 bg-surface-secondary border border-border/80 p-4 shadow-sm'
-          >
+          <View
+            style={{
+              borderTopLeftRadius: 16,
+              borderTopRightRadius: 28,
+              borderBottomRightRadius: 16,
+              borderBottomLeftRadius: 28,
+            }}
+            className='flex-1 bg-surface-secondary border border-border/80 p-4 shadow-sm'>
             <View className='flex-row items-center gap-1 mb-1'>
               <HugeiconsIcon icon={HistoryIcon} size={12} color='#64748B' />
               <Text className='text-muted-foreground text-[11px] uppercase font-bold'>

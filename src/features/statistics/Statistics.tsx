@@ -16,10 +16,9 @@ import { Pressable, ScrollView, View } from 'react-native'
 import { LineChart } from 'react-native-gifted-charts'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { HydrationLog, MedicationLog, WeightLog } from '../../core/models/types'
-import { healthApi } from '../../core/services/api'
+import { healthApi, medicationsApi } from '../../core/services/api'
 import { Typography } from '../../design-system/Typography'
 import { cn } from '../../utils/formatters'
-import { useMedicationsStore } from '../medications/store'
 
 import { Text } from '../../design-system/Text'
 
@@ -90,8 +89,6 @@ export function Statistics() {
     new Date(today.getFullYear(), today.getMonth(), 1),
   )
 
-  const { logs } = useMedicationsStore()
-
   const { data: rawWeightLogs } = useQuery({
     queryKey: ['weightLogs'],
     queryFn: healthApi.getWeightLogs,
@@ -102,13 +99,27 @@ export function Statistics() {
     queryFn: healthApi.getHydrationLogs,
   })
 
+  const { data: medicationLogs = [] } = useQuery({
+    queryKey: ['medicationLogs'],
+    queryFn: medicationsApi.getMedicationLogs,
+  })
+
   // Prevenção de crashes caso a API retorne objetos aninhados ao invés de array
-  const weightLogs: WeightLog[] = Array.isArray(rawWeightLogs)
+  const backendWeightLogs: WeightLog[] = Array.isArray(rawWeightLogs)
     ? rawWeightLogs
     : []
   const hydrationLogs: HydrationLog[] = Array.isArray(rawHydrationLogs)
     ? rawHydrationLogs
     : []
+
+  const weightLogs: WeightLog[] = useMemo(() => {
+    return backendWeightLogs
+      .filter((entry) => /^[0-9]{4}-[0-9]{2}-[0-9]{2}$/.test(entry.loggedAt))
+      .sort(
+        (a, b) =>
+          new Date(a.loggedAt).getTime() - new Date(b.loggedAt).getTime(),
+      )
+  }, [backendWeightLogs])
 
   const year = viewDate.getFullYear()
   const month = viewDate.getMonth()
@@ -131,12 +142,12 @@ export function Statistics() {
       days.push({
         day: d,
         dateStr,
-        adherence: getAdherence(logs, dateStr),
+        adherence: getAdherence(medicationLogs, dateStr),
         isFuture,
       })
     }
     return days
-  }, [year, month, daysInMonth, firstDayOfWeek, logs])
+  }, [year, month, daysInMonth, firstDayOfWeek, medicationLogs])
 
   const weeklyWaterAvg = useMemo(() => {
     const sevenDaysAgo = new Date(today)

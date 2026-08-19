@@ -1,6 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { ArrowLeft02Icon, PillBottleIcon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react-native'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useLocalSearchParams, useRouter } from 'expo-router'
 import React, { useEffect } from 'react'
 import { Controller, useForm } from 'react-hook-form'
@@ -13,10 +14,10 @@ import {
 } from 'react-native'
 import Toast from 'react-native-toast-message'
 import { z } from 'zod'
+import { medicationsApi } from '../../core/services/api'
 import { Button } from '../../design-system/Button'
 import { Input } from '../../design-system/Input'
 import { Typography } from '../../design-system/Typography'
-import { useMedicationsStore } from './store'
 
 import { Text } from '../../design-system/Text'
 
@@ -49,9 +50,49 @@ export function MedicationForm() {
   const router = useRouter()
   const { id } = useLocalSearchParams<{ id: string }>()
   const isEditing = Boolean(id)
+  const queryClient = useQueryClient()
 
-  const { addMedication, updateMedication, getMedicationById } =
-    useMedicationsStore()
+  const { data: medication, isLoading: medicationLoading } = useQuery({
+    queryKey: ['medication', id],
+    queryFn: () =>
+      id ? medicationsApi.getMedicationById(id) : Promise.resolve(undefined),
+    enabled: Boolean(id),
+    staleTime: 1000 * 60 * 5,
+  })
+
+  const addMutation = useMutation({
+    mutationFn: (data: MedicationFormValues) =>
+      medicationsApi.addMedication(data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['medications'] })
+      Toast.show({ type: 'success', text1: 'Medicamento adicionado!' })
+      router.back()
+    },
+    onError: () => {
+      Toast.show({
+        type: 'error',
+        text1: 'Erro ao adicionar',
+        text2: 'Não foi possível cadastrar o medicamento.',
+      })
+    },
+  })
+
+  const updateMutation = useMutation({
+    mutationFn: (values: MedicationFormValues) =>
+      id ? medicationsApi.updateMedication(id, values) : Promise.resolve(),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['medications'] })
+      Toast.show({ type: 'success', text1: 'Medicamento atualizado!' })
+      router.back()
+    },
+    onError: () => {
+      Toast.show({
+        type: 'error',
+        text1: 'Erro ao atualizar',
+        text2: 'Não foi possível salvar as alterações.',
+      })
+    },
+  })
 
   const {
     control,
@@ -70,29 +111,23 @@ export function MedicationForm() {
   })
 
   useEffect(() => {
-    if (isEditing && id) {
-      const med = getMedicationById(id)
-      if (med) {
-        reset({
-          name: med.name,
-          dosage: med.dosage,
-          stockCount: med.stockCount,
-          lowStockThreshold: med.lowStockThreshold,
-          timeOfDay: med.timeOfDay,
-        })
-      }
+    if (isEditing && medication) {
+      reset({
+        name: medication.name,
+        dosage: medication.dosage,
+        stockCount: medication.stockCount,
+        lowStockThreshold: medication.lowStockThreshold,
+        timeOfDay: medication.timeOfDay,
+      })
     }
-  }, [id, isEditing, getMedicationById, reset])
+  }, [isEditing, medication, reset])
 
   const onSubmit = (values: MedicationFormValues) => {
     if (isEditing && id) {
-      updateMedication(id, values)
-      Toast.show({ type: 'success', text1: `${values.name} atualizado!` })
+      updateMutation.mutate(values)
     } else {
-      addMedication(values)
-      Toast.show({ type: 'success', text1: `${values.name} adicionado!` })
+      addMutation.mutate(values)
     }
-    router.back()
   }
 
   return (

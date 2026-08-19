@@ -8,15 +8,16 @@ import {
   RefreshDotIcon,
 } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react-native'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { useRouter } from 'expo-router'
 import React, { useState } from 'react'
 import { Alert, FlatList, Pressable, View } from 'react-native'
 import Toast from 'react-native-toast-message'
 import { Medication } from '../../core/models/types'
+import { medicationsApi } from '../../core/services/api'
 import { Button } from '../../design-system/Button'
 import { Typography } from '../../design-system/Typography'
 import { cn } from '../../utils/formatters'
-import { useMedicationsStore } from './store'
 
 import { Text } from '../../design-system/Text'
 
@@ -132,18 +133,46 @@ function MedicationItem({
 
 export function MedicationsList() {
   const router = useRouter()
-  const {
-    getActiveMedications,
-    getInactiveMedications,
-    deleteMedication,
-    deactivateMedication,
-    reactivateMedication,
-  } = useMedicationsStore()
-
+  const queryClient = useQueryClient()
   const [tab, setTab] = useState<Tab>('active')
 
-  const active = getActiveMedications()
-  const inactive = getInactiveMedications()
+  const { data: medications = [] } = useQuery({
+    queryKey: ['medications'],
+    queryFn: medicationsApi.getMedications,
+  })
+
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) => medicationsApi.deleteMedication(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['medications'] })
+      Toast.show({ type: 'success', text1: 'Medicamento removido.' })
+    },
+    onError: () => {
+      Toast.show({
+        type: 'error',
+        text1: 'Erro ao remover',
+        text2: 'Não foi possível excluir o medicamento.',
+      })
+    },
+  })
+
+  const updateMutation = useMutation({
+    mutationFn: ({ id, active }: { id: string; active: boolean }) =>
+      medicationsApi.updateMedication(id, { active }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['medications'] })
+    },
+    onError: () => {
+      Toast.show({
+        type: 'error',
+        text1: 'Erro ao atualizar',
+        text2: 'Não foi possível alterar o status do medicamento.',
+      })
+    },
+  })
+
+  const active = medications.filter((m) => m.active)
+  const inactive = medications.filter((m) => !m.active)
   const displayed = tab === 'active' ? active : inactive
 
   const handleDelete = (id: string, name: string) => {
@@ -155,22 +184,19 @@ export function MedicationsList() {
         {
           text: 'Excluir',
           style: 'destructive',
-          onPress: () => {
-            deleteMedication(id)
-            Toast.show({ type: 'success', text1: `${name} removido.` })
-          },
+          onPress: () => deleteMutation.mutate(id),
         },
       ],
     )
   }
 
   const handleDeactivate = (id: string, name: string) => {
-    deactivateMedication(id)
+    updateMutation.mutate({ id, active: false })
     Toast.show({ type: 'success', text1: `${name} finalizado.` })
   }
 
   const handleReactivate = (id: string, name: string) => {
-    reactivateMedication(id)
+    updateMutation.mutate({ id, active: true })
     Toast.show({ type: 'success', text1: `${name} reativado!` })
   }
 

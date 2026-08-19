@@ -1,6 +1,4 @@
-import AsyncStorage from '@react-native-async-storage/async-storage'
 import { create } from 'zustand'
-import { createJSONStorage, persist } from 'zustand/middleware'
 import { WeightLog } from '../../core/models/types'
 
 interface WeightState {
@@ -8,32 +6,37 @@ interface WeightState {
   addOrUpdateWeight: (weightKg: number) => void
 }
 
-export const useWeightStore = create<WeightState>()(
-  persist(
-    (set) => ({
-      logs: [],
+const getTodayDate = () => new Date().toISOString().split('T')[0]
 
-      addOrUpdateWeight: (weightKg) => {
-        const today = new Date().toISOString().split('T')[0]
-        set((state) => {
-          const existingIndex = state.logs.findIndex((l) => l.loggedAt === today)
-          if (existingIndex >= 0) {
-            const newLogs = [...state.logs]
-            newLogs[existingIndex] = { ...newLogs[existingIndex], weightKg }
-            return { logs: newLogs }
-          }
-          return {
-            logs: [
-              ...state.logs,
-              { id: `w_${Date.now()}`, loggedAt: today, weightKg },
-            ],
-          }
-        })
-      },
-    }),
-    {
-      name: 'weight-storage',
-      storage: createJSONStorage(() => AsyncStorage),
-    },
-  ),
-)
+export const useWeightStore = create<WeightState>()((set) => ({
+  logs: [],
+
+  addOrUpdateWeight: (weightKg) => {
+    const today = getTodayDate()
+    set((state) => {
+      const existingIndex = state.logs.findIndex((l) => l.loggedAt === today)
+      const newEntry: WeightLog = {
+        id:
+          existingIndex >= 0
+            ? state.logs[existingIndex].id
+            : `w_${Date.now()}`,
+        loggedAt: today,
+        weightKg,
+      }
+
+      const newLogs = existingIndex >= 0
+        ? state.logs.map((log, index) =>
+            index === existingIndex ? newEntry : log,
+          )
+        : [...state.logs, newEntry]
+
+      return {
+        logs: newLogs.sort(
+          (a, b) =>
+            new Date(b.loggedAt).getTime() -
+            new Date(a.loggedAt).getTime(),
+        ),
+      }
+    })
+  },
+}))

@@ -1,16 +1,18 @@
-import AsyncStorage from '@react-native-async-storage/async-storage'
 import { create } from 'zustand'
-import { createJSONStorage, persist } from 'zustand/middleware'
 import {
   Medication,
   MedicationLog,
   MedicationStatus,
 } from '../../core/models/types'
+import api from '../../core/services/api/client'
+
+const getTodayDate = () => new Date().toISOString().split('T')[0]
 
 export interface MedicationFormData {
   name: string
   dosage: string
   stockCount: number
+  lowStockThreshold: number
   timeOfDay: string
   color?: string
   icon?: string
@@ -20,130 +22,153 @@ export interface MedicationFormData {
 interface MedicationsState {
   medications: Medication[]
   logs: MedicationLog[]
+  isLoading: boolean
 
-  addMedication: (data: MedicationFormData) => string
-  updateMedication: (id: string, data: Partial<MedicationFormData>) => void
-  deleteMedication: (id: string) => void
-  deactivateMedication: (id: string) => void
-  reactivateMedication: (id: string) => void
-
-  logMedication: (medicationId: string, status: MedicationStatus) => void
+  fetchMedications: () => Promise<void>
+  addMedication: (data: MedicationFormData) => Promise<string | undefined>
+  updateMedication: (id: string, data: Partial<MedicationFormData>) => Promise<void>
+  deactivateMedication: (id: string) => Promise<void>
+  logMedication: (medicationId: string, status: MedicationStatus) => Promise<void>
   getTodayLog: (medicationId: string) => MedicationLog | undefined
   getActiveMedications: () => Medication[]
   getInactiveMedications: () => Medication[]
   getMedicationById: (id: string) => Medication | undefined
 }
 
-const SEED_MEDICATIONS: Medication[] = [
-  {
-    id: '1',
-    name: 'Vitamina C',
-    dosage: '1000mg',
-    stockCount: 5,
-    timeOfDay: '08:00',
-    active: true,
-    color: '#E24A5C',
-    icon: 'pill',
-    frequency: 'DAILY',
-  },
-  {
-    id: '2',
-    name: 'Ômega 3',
-    dosage: '1 cápsula',
-    stockCount: 45,
-    timeOfDay: '12:00',
-    active: true,
-    color: '#9D75CB',
-    icon: 'capsule',
-    frequency: 'DAILY',
-  },
-]
-
 export const useMedicationsStore = create<MedicationsState>()(
-  persist(
-    (set, get) => ({
-      medications: SEED_MEDICATIONS,
-      logs: [],
+  (set, get) => ({
+    medications: [],
+    logs: [],
+    isLoading: false,
 
-      addMedication: (data) => {
-        const id = `med_${Date.now()}`
-        const medication: Medication = {
-          ...data,
-          id,
-          active: true,
+    fetchMedications: async () => {
+      try {
+        set({ isLoading: true })
+        const response = await api.get('/medications')
+        const data = response.data?.data || response.data || []
+        
+        // Mapeia isActive do backend para active do frontend se necessário
+        const formatted = Array.isArray(data) ? data.map((item: any) => ({
+          ...item,
+          active: item.active !== undefined ? item.active : (item.isActive ?? true),
+          lowStockThreshold: item.lowStockThreshold ?? 1,
+        })) : []
+
+        set({ medications: formatted, isLoading: false })
+      } catch (error) {
+        console.error('Erro ao buscar medicações:', error)
+        set({ isLoading: false })
+      }
+    },
+
+    addMedication: async (data) => {
+      try {
+        const payload = {
+          name: data.name,
+          dosage: data.dosage,
+          stockCount: Number(data.stockCount) || 0,
+          lowStockThreshold: Number(data.lowStockThreshold) || 1,
+          timeOfDay: data.timeOfDay || '08:00',
           color: data.color || '#E24A5C',
           icon: data.icon || 'pill',
           frequency: data.frequency || 'DAILY',
         }
-        set((state) => ({ medications: [...state.medications, medication] }))
-        return id
-      },
 
-      updateMedication: (id, data) =>
+        const response = await api.post('/medications', payload)
+        const created = response.data?.data || response.data
+
+        if (created) {
+          const newMed = {
+            ...created,
+            active: created.active !== undefined ? created.active : (created.isActive ?? true),
+          }
+          set((state) => ({ medications: [...state.medications, newMed] }))
+          return created.id
+        }
+      } catch (error: any) {
+        console.error('Erro ao adicionar medicamento:', error?.response?.data || error.message)
+        throw error
+      }
+    },
+
+    updateMedication: async (id, data) => {
+      try {
+        const response = await api.patch(`/medications/${id}`, data)
+        const updated = response.data?.data || response.data
+
         set((state) => ({
           medications: state.medications.map((m) =>
-            m.id === id ? { ...m, ...data } : m,
+            m.id === id ? { ...m, ...updated } : m
           ),
-        })),
+        }))
+      } catch (error) {
+        console.error('Erro ao atualizar medicamento:', error)
+      }
+    },
 
-      deleteMedication: (id) =>
-        set((state) => ({
-          medications: state.medications.filter((m) => m.id !== id),
-          logs: state.logs.filter((l) => l.medicationId !== id),
-        })),
-
-      deactivateMedication: (id) =>
-        set((state) => ({
-          medications: state.medications.map((m) =>
-            m.id === id ? { ...m, active: false } : m,
-          ),
-        })),
-
-      reactivateMedication: (id) =>
+    deactivateMedication: async (id) => {
+      try {
+        await api.patch(`/medications/${id}/deactivate`)
         set((state) => ({
           medications: state.medications.map((m) =>
-            m.id === id ? { ...m, active: true } : m,
+            m.id === id ? { ...m, active: false } : m
           ),
-        })),
+        }))
+      } catch (error) {
+        console.error('Erro ao desativar medicamento:', error)
+      }
+    },
 
-      logMedication: (medicationId, status) => {
-        const today = new Date().toISOString().split('T')[0]
+    logMedication: async (medicationId, status) => {
+      try {
+        const today = getTodayDate()
+        const payload = {
+          status,
+          loggedAt: new Date().toISOString(),
+        }
+
+        const response = await api.post(`/medications/${medicationId}/log`, payload)
+        const logResult = response.data?.data || response.data
+
         set((state) => {
           const filteredLogs = state.logs.filter(
             (l) => !(l.medicationId === medicationId && l.loggedAt === today),
           )
           const newLog: MedicationLog = {
-            id: `log_${Date.now()}`,
+            id: logResult?.id || `log_${Date.now()}`,
             medicationId,
             loggedAt: today,
             status,
           }
-          let medications = state.medications
+
+          let updatedMedications = state.medications
           if (status === 'TAKEN') {
-            medications = state.medications.map((m) =>
+            updatedMedications = state.medications.map((m) =>
               m.id === medicationId
                 ? { ...m, stockCount: Math.max(0, m.stockCount - 1) }
                 : m,
             )
           }
-          return { logs: [...filteredLogs, newLog], medications }
+
+          return {
+            logs: [...filteredLogs, newLog],
+            medications: updatedMedications,
+          }
         })
-      },
-
-      getTodayLog: (medicationId) => {
-        const today = new Date().toISOString().split('T')[0]
-        return get().logs.find(
-          (l) => l.medicationId === medicationId && l.loggedAt === today,
-        )
-      },
-
-      getActiveMedications: () => get().medications.filter((m) => m.active),
-      getInactiveMedications: () => get().medications.filter((m) => !m.active),
-      getMedicationById: (id) => get().medications.find((m) => m.id === id),
-    }),
-    {
-      name: 'healthy-medications-storage',
-      storage: createJSONStorage(() => AsyncStorage),
+      } catch (error: any) {
+        console.error('Erro ao registrar consumo de medicamento:', error?.response?.data || error.message)
+      }
     },
-  ),
+
+    getTodayLog: (medicationId) => {
+      const today = getTodayDate()
+      return get().logs.find(
+        (l) => l.medicationId === medicationId && l.loggedAt === today,
+      )
+    },
+
+    getActiveMedications: () => get().medications.filter((m) => m.active !== false),
+    getInactiveMedications: () => get().medications.filter((m) => m.active === false),
+    getMedicationById: (id) => get().medications.find((m) => m.id === id),
+  }),
 )

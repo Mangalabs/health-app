@@ -65,6 +65,7 @@ export interface Medication {
   name: string
   dosage: string
   stockCount: number
+  lowStockThreshold: number
   timeOfDay: string
   active: boolean
   color: string
