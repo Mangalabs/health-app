@@ -1,3 +1,4 @@
+// src/features/health-tracking/WeightCard.tsx
 import { HistoryIcon, WeightScaleIcon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react-native'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
@@ -14,15 +15,26 @@ import {
   CardTitle,
 } from '../../design-system/Card'
 import { Input } from '../../design-system/Input'
-
 import { Text } from '../../design-system/Text'
 
-const formatShortDate = (dateStr?: string) => {
-  if (!dateStr || typeof dateStr !== 'string') return ''
-  const parts = dateStr.split('-')
-  if (parts.length < 3) return dateStr
-  const [y, m, d] = parts
-  return `${d}/${m}`
+// Formata data e hora de forma amigável
+const formatDateAndTime = (isoString?: string) => {
+  if (!isoString) return ''
+  try {
+    const date = new Date(isoString)
+    if (isNaN(date.getTime())) return ''
+    const day = String(date.getDate()).padStart(2, '0')
+    const month = String(date.getMonth() + 1).padStart(2, '0')
+    const hours = String(date.getHours()).padStart(2, '0')
+    const minutes = String(date.getMinutes()).padStart(2, '0')
+    // Se a hora for 00:00, provavelmente é apenas data, então omitimos
+    if (hours === '00' && minutes === '00') {
+      return `${day}/${month}`
+    }
+    return `${day}/${month} às ${hours}:${minutes}`
+  } catch {
+    return ''
+  }
 }
 
 const getTodayDate = () => new Date().toISOString().split('T')[0]
@@ -61,17 +73,34 @@ export function WeightCard() {
 
   const today = useMemo(getTodayDate, [])
 
-  const todayLog = logs.find((l) => normalizeDateString(l.loggedAt) === today)
+  // Ordena todos os logs por timestamp decrescente (mais recente primeiro)
+  const sortedLogs = useMemo(() => {
+    return [...logs].sort(
+      (a, b) => new Date(b.loggedAt).getTime() - new Date(a.loggedAt).getTime(),
+    )
+  }, [logs])
 
-  const lastLog = useMemo(() => {
-    return [...logs]
-      .filter((l) => normalizeDateString(l.loggedAt) !== today)
-      .sort(
-        (a, b) =>
-          new Date(a.loggedAt).getTime() - new Date(b.loggedAt).getTime(),
-      )
-      .pop()
-  }, [logs, today])
+  // Registros de hoje (já ordenados do mais recente para o mais antigo)
+  const todayLogs = useMemo(() => {
+    return sortedLogs.filter((l) => normalizeDateString(l.loggedAt) === today)
+  }, [sortedLogs, today])
+
+  // Peso de hoje: o primeiro da lista (mais recente) ou null
+  const currentLog = todayLogs.length > 0 ? todayLogs[0] : null
+
+  // Último peso: o primeiro registro com timestamp estritamente menor que o do currentLog
+  const previousLog = useMemo(() => {
+    if (!currentLog) {
+      // Se não há registro hoje, mostramos o mais recente geral (fallback)
+      return sortedLogs.length > 0 ? sortedLogs[0] : null
+    }
+    const currentTimestamp = new Date(currentLog.loggedAt).getTime()
+    return (
+      sortedLogs.find(
+        (l) => new Date(l.loggedAt).getTime() < currentTimestamp,
+      ) || null
+    )
+  }, [currentLog, sortedLogs])
 
   const [weightInput, setWeightInput] = useState('')
 
@@ -124,7 +153,7 @@ export function WeightCard() {
               Hoje
             </Text>
             <Text className='text-2xl font-bold text-brand-purple'>
-              {todayLog ? `${todayLog.weightKg} kg` : '--'}
+              {currentLog ? `${currentLog.weightKg} kg` : '--'}
             </Text>
           </View>
 
@@ -143,11 +172,11 @@ export function WeightCard() {
               </Text>
             </View>
             <Text className='text-2xl font-bold text-foreground'>
-              {lastLog ? `${lastLog.weightKg} kg` : '--'}
+              {previousLog ? `${previousLog.weightKg} kg` : '--'}
             </Text>
-            {lastLog && lastLog.loggedAt && (
+            {previousLog && previousLog.loggedAt && (
               <Text className='text-[10px] text-muted-foreground mt-0.5'>
-                em {formatShortDate(lastLog.loggedAt)}
+                {formatDateAndTime(previousLog.loggedAt)}
               </Text>
             )}
           </View>
@@ -155,21 +184,21 @@ export function WeightCard() {
 
         <View className='space-y-6 px-2 mt-2'>
           <Text className='text-xs text-muted-foreground ml-1 mb-2'>
-            {todayLog
+            {currentLog
               ? 'Deseja atualizar seu peso de hoje?'
               : 'Registrar peso atual'}
           </Text>
           <View className='flex-row items-center gap-2'>
             <Input
               keyboardType='decimal-pad'
-              placeholder='Ex: 68.5'
+              placeholder='Ex: 44.5'
               value={weightInput}
               onChangeText={setWeightInput}
               className='flex-1 bg-surface-secondary rounded-full h-12 pl-5 border-border/80'
             />
             <Button
               onPress={handleSubmit}
-              label={todayLog ? 'Atualizar' : 'Salvar'}
+              label={currentLog ? 'Atualizar' : 'Salvar'}
               className='px-6 rounded-full h-12 shadow-sm'
             />
           </View>
