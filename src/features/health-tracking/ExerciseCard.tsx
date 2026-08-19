@@ -1,3 +1,4 @@
+// src/features/health-tracking/ExerciseCard.tsx
 import {
   BodyPartMuscleIcon,
   Coffee01Icon,
@@ -10,6 +11,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { AnimatePresence, MotiView } from 'moti'
 import React from 'react'
 import { View } from 'react-native'
+import Toast from 'react-native-toast-message'
 import { healthApi } from '../../core/services/api'
 import { Button } from '../../design-system/Button'
 import {
@@ -19,90 +21,132 @@ import {
   CardHeader,
   CardTitle,
 } from '../../design-system/Card'
+import { Text } from '../../design-system/Text'
 import { useGamificationStore } from '../gamification/store'
 
-import { Text } from '../../design-system/Text'
-
-export function ExerciseCard({ completed }: { completed: boolean | null }) {
+export function ExerciseCard({
+  completed,
+}: {
+  completed: boolean | null | undefined
+}) {
   const queryClient = useQueryClient()
   const { addXp, updateStreak, setPetState } = useGamificationStore()
+
+  // Tratamento seguro para considerar pendente tanto null quanto undefined
+  const isPending = completed === null || completed === undefined
 
   const mutation = useMutation({
     mutationFn: (didExercise: boolean) => healthApi.logExercise(didExercise),
     onSuccess: (_, didExercise) => {
+      // Invalida a query do dashboard para forçar o backend a reavaliar o status do dia
       queryClient.invalidateQueries({ queryKey: ['today'] })
+
       if (didExercise) {
         addXp(50)
         updateStreak(new Date().toISOString().split('T')[0])
         setPetState('happy')
+        Toast.show({
+          type: 'success',
+          text1: 'Atividade registrada!',
+          text2: '+50 XP pro seu pet!',
+        })
       } else {
         setPetState('sleepy')
+        Toast.show({
+          type: 'info',
+          text1: 'Descanso registrado',
+          text2: 'Modo recarga ativado para hoje.',
+        })
       }
+    },
+    onError: (error: any) => {
+      const message =
+        error?.response?.data?.message ||
+        error?.message ||
+        'Erro ao registrar atividade. Tente novamente.'
+
+      Toast.show({
+        type: 'error',
+        text1: 'Ops!',
+        text2: message,
+      })
     },
   })
 
+  const isSaving = mutation.isPending
+
   return (
     <Card
-      className="bg-white shadow-sm border border-border/60 my-4"
+      className='bg-white shadow-sm border border-border/60 my-4'
       style={{
-        // Nuvem formato 3: topo direito mais alto
         borderTopLeftRadius: 24,
         borderTopRightRadius: 40,
         borderBottomRightRadius: 32,
         borderBottomLeftRadius: 48,
-        overflow: 'hidden'
-      }}
-    >
+        overflow: 'hidden',
+        opacity: isSaving ? 0.7 : 1,
+      }}>
       <CardHeader className='pb-2 pt-5 pl-6'>
         <View className='flex-row items-center gap-2'>
           <HugeiconsIcon icon={Dumbbell02Icon} size={24} color='#FF8BA7' />
           <CardTitle className='text-brand-pink'>Movimento</CardTitle>
         </View>
         <CardDescription>
-          Você praticou alguma atividade física hoje?
+          {isPending
+            ? 'Você fez exercício hoje?'
+            : completed
+              ? 'Atividade física registrada hoje'
+              : 'Dia de descanso registrado'}
         </CardDescription>
       </CardHeader>
 
       <CardContent className='pt-4 pb-6 items-center justify-center min-h-[140px]'>
         <AnimatePresence>
-          {completed === null ? (
+          {isPending ? (
             <MotiView
-              key='buttons'
+              key='question'
               from={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className='flex-row flex-wrap justify-center gap-3 w-full px-2'>
-              <Button
-                variant='outline'
-                size='lg'
-                className='flex-1 min-w-[120px] border-brand-purple/20 bg-brand-purple/5 rounded-full h-12'
-                onPress={() => mutation.mutate(false)}
-                disabled={mutation.isPending}
-                accessibilityLabel='Hoje foi meu dia de descanso'>
-                <View className='flex-row items-center justify-center gap-2'>
-                  <HugeiconsIcon icon={ZzzIcon} size={18} color='#9D75CB' />
-                  <Text className='text-brand-purple font-medium text-[15px]'>
-                    Dia Off
-                  </Text>
-                </View>
-              </Button>
+              className='w-full flex-col items-center justify-center gap-3 px-2'>
+              <Text className='text-foreground font-medium text-center mb-1 text-[15px]'>
+                Deseja registrar sua atividade diária?
+              </Text>
+              <View className='flex-row justify-center gap-3 w-full'>
+                <Button
+                  variant='outline'
+                  size='lg'
+                  className='flex-1 min-w-[120px] border-brand-purple/20 bg-brand-purple/5 rounded-full h-12'
+                  onPress={() => mutation.mutate(false)}
+                  disabled={isSaving}
+                  accessibilityLabel='Responder não para exercício hoje'>
+                  <View className='flex-row items-center justify-center gap-2'>
+                    <HugeiconsIcon icon={ZzzIcon} size={18} color='#9D75CB' />
+                    <Text className='text-brand-purple font-medium text-[15px]'>
+                      {isSaving ? 'Salvando...' : 'Não'}
+                    </Text>
+                  </View>
+                </Button>
 
-              <Button
-                variant='default'
-                size='lg'
-                className='flex-1 min-w-[120px] bg-brand-pink rounded-full h-12 shadow-sm'
-                onPress={() => mutation.mutate(true)}
-                disabled={mutation.isPending}
-                accessibilityLabel='Sim, me exercitei hoje'>
-                <View className='flex-row items-center justify-center gap-2'>
-                  <HugeiconsIcon
-                    icon={BodyPartMuscleIcon}
-                    size={18}
-                    color='#FFFFFF'
-                  />
-                  <Text className='text-white font-bold text-[15px]'>Treinei!</Text>
-                </View>
-              </Button>
+                <Button
+                  variant='default'
+                  size='lg'
+                  className='flex-1 min-w-[120px] bg-brand-pink rounded-full h-12 shadow-sm'
+                  onPress={() => mutation.mutate(true)}
+                  disabled={isSaving}
+                  accessibilityLabel='Responder sim para exercício hoje'>
+                  <View className='flex-row items-center justify-center gap-2'>
+                    <HugeiconsIcon
+                      icon={BodyPartMuscleIcon}
+                      size={18}
+                      color='#FFFFFF'
+                    />
+                    <Text className='text-white font-bold text-[15px]'>
+                      {isSaving ? 'Salvando...' : 'Sim'}
+                    </Text>
+                  </View>
+                </Button>
+              </View>
             </MotiView>
           ) : (
             <MotiView

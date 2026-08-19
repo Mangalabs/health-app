@@ -13,7 +13,7 @@ export const healthApi = {
     return {
       hydrationGoal: payload?.profile?.dailyHydrationGoal ?? 2000,
       hydrationCurrent: payload?.hydration?.current ?? 0,
-      exerciseCompleted: payload?.exercise?.done ?? false,
+      exerciseCompleted: payload?.exercise?.done ?? null,
     }
   },
 
