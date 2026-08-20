@@ -17,9 +17,8 @@ import { z } from 'zod'
 import { medicationsApi } from '../../core/services/api'
 import { Button } from '../../design-system/Button'
 import { Input } from '../../design-system/Input'
-import { Typography } from '../../design-system/Typography'
-
 import { Text } from '../../design-system/Text'
+import { Typography } from '../../design-system/Typography'
 
 const medicationSchema = z.object({
   name: z.string().min(2, 'Nome deve ter ao menos 2 caracteres'),
@@ -34,7 +33,7 @@ type MedicationFormValues = z.infer<typeof medicationSchema>
 function Field({ label, error, children, hint }: any) {
   return (
     <View className='space-y-1.5 mb-4'>
-      <Text className='  text-foreground text-[14px] mb-1'>{label}</Text>
+      <Text className='text-foreground text-[14px] mb-1'>{label}</Text>
       {children}
       {hint && !error && (
         <Text className='text-muted-foreground text-[12px] mt-1'>{hint}</Text>
@@ -116,7 +115,7 @@ export function MedicationForm() {
         name: medication.name,
         dosage: medication.dosage,
         stockCount: medication.stockCount,
-        lowStockThreshold: medication.lowStockThreshold,
+        lowStockThreshold: medication.lowStockThreshold || 10,
         timeOfDay: medication.timeOfDay,
       })
     }
@@ -271,13 +270,13 @@ export function MedicationForm() {
                 variant='outline'
                 className='flex-1 bg-transparent'
                 onPress={() => router.back()}>
-                <Text className='text-brand-purple  '>Cancelar</Text>
+                <Text className='text-brand-purple'>Cancelar</Text>
               </Button>
               <Button
                 className='flex-1'
                 disabled={isSubmitting}
                 onPress={handleSubmit(onSubmit)}>
-                <Text className='text-white  '>
+                <Text className='text-white'>
                   {isEditing ? 'Salvar' : 'Adicionar'}
                 </Text>
               </Button>

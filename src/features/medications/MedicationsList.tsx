@@ -16,10 +16,9 @@ import Toast from 'react-native-toast-message'
 import { Medication } from '../../core/models/types'
 import { medicationsApi } from '../../core/services/api'
 import { Button } from '../../design-system/Button'
+import { Text } from '../../design-system/Text'
 import { Typography } from '../../design-system/Typography'
 import { cn } from '../../utils/formatters'
-
-import { Text } from '../../design-system/Text'
 
 type Tab = 'active' | 'inactive'
 
@@ -36,7 +35,7 @@ function MedicationItem({
   onDelete: () => void
   onToggle: () => void
 }) {
-  const isLowStock = med.stockCount <= med.lowStockThreshold
+  const isLowStock = med.stockCount <= (med.lowStockThreshold || 1)
   const isOutOfStock = med.stockCount === 0
 
   return (
@@ -48,7 +47,7 @@ function MedicationItem({
 
         <View className='flex-1'>
           <View className='flex-row items-center gap-2 flex-wrap'>
-            <Text className='  text-foreground text-[15px]'>{med.name}</Text>
+            <Text className='text-foreground text-[15px]'>{med.name}</Text>
             <Text className='text-muted-foreground text-[13px]'>
               ({med.dosage})
             </Text>
@@ -64,14 +63,14 @@ function MedicationItem({
             {isOutOfStock ? (
               <View className='flex-row items-center gap-1'>
                 <HugeiconsIcon icon={Alert01Icon} size={16} color='#EF4444' />
-                <Text className='  text-[12px] text-destructive'>
+                <Text className='text-[12px] text-destructive'>
                   Sem estoque
                 </Text>
               </View>
             ) : (
               <Text
                 className={cn(
-                  '  text-[12px]',
+                  'text-[12px]',
                   isLowStock
                     ? 'text-feedback-warning'
                     : 'text-muted-foreground',
@@ -119,9 +118,7 @@ function MedicationItem({
                   size={20}
                   color='#9D75CB'
                 />
-                <Text className='text-brand-purple text-[12px]  '>
-                  Reativar
-                </Text>
+                <Text className='text-brand-purple text-[12px]'>Reativar</Text>
               </Pressable>
             </View>
           )}
@@ -171,8 +168,8 @@ export function MedicationsList() {
     },
   })
 
-  const active = medications.filter((m) => m.active)
-  const inactive = medications.filter((m) => !m.active)
+  const active = medications.filter((m) => m.active !== false)
+  const inactive = medications.filter((m) => m.active === false)
   const displayed = tab === 'active' ? active : inactive
 
   const handleDelete = (id: string, name: string) => {
@@ -235,7 +232,7 @@ export function MedicationsList() {
             )}>
             <Text
               className={cn(
-                ' ',
+                'text-center',
                 tab === t ? 'text-brand-purple' : 'text-muted-foreground',
               )}
               style={{ fontSize: 14 }}>
@@ -270,7 +267,7 @@ export function MedicationsList() {
           variant='outline'
           onPress={() => router.push('/new-medication')}
           className='px-6'>
-          <Text className='text-brand-purple  '>Adicionar</Text>
+          <Text className='text-brand-purple'>Adicionar</Text>
         </Button>
       )}
     </View>
