@@ -107,8 +107,6 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     try {
       const response = await authService.register(data)
 
-      // O backend retorna 'Nix' como padrão para petName.
-      // A sincronização com a gamificação tratará esse valor como "sem pet".
       if (response.user.profile) {
         useGamificationStore.getState().syncWithProfile(response.user.profile)
       } else {

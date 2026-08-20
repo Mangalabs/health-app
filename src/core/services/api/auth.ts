@@ -7,7 +7,6 @@ import {
 import { storage } from '../../storage'
 import api from './client'
 
-// Tipagem flexível para entender o envelopamento do backend
 interface NestAuthResponse {
   data?: {
     accessToken?: string
@@ -19,7 +18,6 @@ interface NestAuthResponse {
   user?: AuthResponse['user']
 }
 
-// Helper para extrair o payload ignorando o "duplo data"
 const extractPayload = (responseBody: NestAuthResponse) => {
   if (responseBody.data) {
     return responseBody.data

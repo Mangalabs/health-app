@@ -9,7 +9,7 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: 'bg-brand-purple', // Nova cor mapeada
+        default: 'bg-brand-purple',
         secondary: 'bg-surface-secondary',
         outline: 'border-2 border-brand-purple bg-transparent',
         ghost: 'bg-transparent',

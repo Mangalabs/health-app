@@ -17,7 +17,6 @@ export const healthApi = {
     }
   },
 
-  // --- Hidratação ---
   addHydration: async (amountMl: number): Promise<void> => {
     await api.post('/hydration', {
       amountMl,
@@ -31,7 +30,6 @@ export const healthApi = {
     return Array.isArray(result) ? result : []
   },
 
-  // Novo: histórico com filtros
   getHydrationHistory: async ({ startDate, endDate }: { startDate: string; endDate: string }): Promise<HydrationLog[]> => {
     const params = new URLSearchParams()
     if (startDate) params.append('startDate', startDate)
@@ -42,7 +40,6 @@ export const healthApi = {
     return Array.isArray(result) ? result : []
   },
 
-  // --- Exercícios ---
   logExercise: async (didExercise: boolean): Promise<void> => {
     await api.post('/exercise', {
       didExercise,
@@ -50,7 +47,6 @@ export const healthApi = {
     })
   },
 
-  // Novo: histórico com filtros
   getExerciseHistory: async ({ startDate, endDate }: { startDate: string; endDate: string }): Promise<any[]> => {
     const params = new URLSearchParams()
     if (startDate) params.append('startDate', startDate)
@@ -61,7 +57,6 @@ export const healthApi = {
     return Array.isArray(result) ? result : []
   },
 
-  // --- Peso ---
   getWeightLogs: async (): Promise<WeightLog[]> => {
     const { data: responseBody } = await api.get('/weight/history')
     const result = extractData(responseBody)
@@ -72,7 +67,6 @@ export const healthApi = {
     await api.post('/weight', { weightKg, loggedAt: new Date().toISOString() })
   },
 
-  // Novo: histórico com filtros
   getWeightHistory: async ({ startDate, endDate }: { startDate: string; endDate: string }): Promise<WeightLog[]> => {
     const params = new URLSearchParams()
     if (startDate) params.append('startDate', startDate)

@@ -19,7 +19,6 @@ module.exports = {
           'success-light': '#D1FAE5',
           warning: '#F59E0B',
         },
-        // Shadcn Mapping
         background: '#FAFAFA',
         foreground: '#2D3748',
         card: '#FFFFFF',

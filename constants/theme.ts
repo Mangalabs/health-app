@@ -1,4 +1,3 @@
-// constants/theme.ts
 export const COLORS = {
   brand: {
     pink: '#FF8BA7',

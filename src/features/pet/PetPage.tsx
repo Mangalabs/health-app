@@ -98,7 +98,6 @@ export function PetPage() {
   const { petState, petName, xp, level, streak, maxStreak } =
     useGamificationStore()
 
-  // Fallback: se não há pet definido, exibe tela de aviso
   if (!petName) {
     return (
       <View className='flex-1 bg-background items-center justify-center'>

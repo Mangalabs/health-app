@@ -28,11 +28,9 @@ api.interceptors.response.use(
       await storage.clearAllSensitives()
 
       try {
-        // 1. Limpa o estado global para notificar o React
         const { useAuthStore } = require('../../store/authStore')
         useAuthStore.getState().clearSession()
 
-        // 2. A garantia absoluta: forçamos o roteador a agir por fora dos componentes
         const { router } = require('expo-router')
         router.replace('/login')
       } catch (e) {

@@ -47,7 +47,6 @@ export const useMedicationsStore = create<MedicationsState>()(
         const response = await api.get('/medications')
         const data = response.data?.data || response.data || []
         
-        // Mapeia isActive do backend para active do frontend se necessário
         const formatted = Array.isArray(data) ? data.map((item: any) => ({
           ...item,
           active: item.active !== undefined ? item.active : (item.isActive ?? true),

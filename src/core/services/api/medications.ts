@@ -3,7 +3,6 @@ import api from './client'
 
 const extractData = (responseBody: any) => responseBody?.data || responseBody
 
-// Mapeamento para garantir compatibilidade com os campos esperados no frontend
 const mapToMedication = (raw: any): Medication => {
   const isActive = raw.active ?? raw.isActive ?? raw.is_active ?? true
   return {
@@ -19,7 +18,6 @@ const mapToMedication = (raw: any): Medication => {
 }
 
 export const medicationsApi = {
-  // ---------- Criação ----------
   create: async (data: {
     name: string
     dosage: string
@@ -38,7 +36,6 @@ export const medicationsApi = {
     return mapToMedication(extractData(response))
   },
 
-  // Alias para manter compatibilidade com componentes existentes
   addMedication: async (
     data: Omit<Medication, 'id' | 'active' | 'color' | 'icon' | 'frequency'> & {
       lowStockThreshold?: number
@@ -47,7 +44,6 @@ export const medicationsApi = {
     return medicationsApi.create(data)
   },
 
-  // ---------- Listagem ----------
   findAll: async (): Promise<Medication[]> => {
     const { data: response } = await api.get('/medications')
     const payload = extractData(response)
@@ -57,18 +53,15 @@ export const medicationsApi = {
     return []
   },
 
-  // Alias para compatibilidade com componentes existentes
   getMedications: async (): Promise<Medication[]> => {
     return medicationsApi.findAll()
   },
 
-  // ---------- Busca por ID ----------
   getMedicationById: async (id: string): Promise<Medication> => {
     const { data: response } = await api.get(`/medications/${id}`)
     return mapToMedication(extractData(response))
   },
 
-  // ---------- Atualização ----------
   updateMedication: async (
     id: string,
     data: Partial<{
@@ -85,7 +78,6 @@ export const medicationsApi = {
     }>
   ): Promise<void> => {
     const payload: any = { ...data }
-    // Garantir que active seja mapeado para isActive
     if (payload.active !== undefined) {
       payload.isActive = payload.active
       delete payload.active
@@ -93,18 +85,15 @@ export const medicationsApi = {
     await api.patch(`/medications/${id}`, payload)
   },
 
-  // ---------- Desativação (finalizar) ----------
   deactivate: async (id: string): Promise<Medication> => {
     const { data: response } = await api.patch(`/medications/${id}/deactivate`)
     return mapToMedication(extractData(response))
   },
 
-  // ---------- Exclusão (permanente) ----------
   deleteMedication: async (id: string): Promise<void> => {
     await api.delete(`/medications/${id}`)
   },
 
-  // ---------- Log de consumo ----------
   logConsumption: async (
     medicationId: string,
     status: string,
@@ -117,7 +106,6 @@ export const medicationsApi = {
     return extractData(response)
   },
 
-  // Alias para compatibilidade com o MedicationsCard
   logMedication: async (
     medicationId: string,
     status: MedicationStatus
@@ -125,7 +113,6 @@ export const medicationsApi = {
     return medicationsApi.logConsumption(medicationId, status)
   },
 
-  // ---------- Histórico de logs com filtros ----------
   getMedicationLogs: async (params?: {
     startDate?: string
     endDate?: string

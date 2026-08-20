@@ -1,4 +1,3 @@
-// src/features/health-tracking/ExerciseCard.tsx
 import {
   BodyPartMuscleIcon,
   Coffee01Icon,
@@ -32,13 +31,11 @@ export function ExerciseCard({
   const queryClient = useQueryClient()
   const { addXp, updateStreak, setPetState } = useGamificationStore()
 
-  // Tratamento seguro para considerar pendente tanto null quanto undefined
   const isPending = completed === null || completed === undefined
 
   const mutation = useMutation({
     mutationFn: (didExercise: boolean) => healthApi.logExercise(didExercise),
     onSuccess: (_, didExercise) => {
-      // Invalida a query do dashboard para forçar o backend a reavaliar o status do dia
       queryClient.invalidateQueries({ queryKey: ['today'] })
 
       if (didExercise) {

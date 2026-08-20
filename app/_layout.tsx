@@ -40,8 +40,6 @@ export default function RootLayout() {
     if (!user && !isAuthRoute) {
       router.replace('/login')
     } else if (user) {
-      // O backend retorna 'Nix' como padrão para petName quando o pet ainda não foi cadastrado.
-      // Consideramos que o onboarding está completo apenas se petName não for 'Nix'.
       const hasCompletedOnboarding = Boolean(
         user.profile?.petName && user.profile.petName !== 'Nix',
       )

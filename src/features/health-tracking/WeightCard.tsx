@@ -1,4 +1,3 @@
-// src/features/health-tracking/WeightCard.tsx
 import { HistoryIcon, WeightScaleIcon } from '@hugeicons/core-free-icons'
 import { HugeiconsIcon } from '@hugeicons/react-native'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
@@ -17,7 +16,6 @@ import {
 import { Input } from '../../design-system/Input'
 import { Text } from '../../design-system/Text'
 
-// Formata data e hora de forma amigável
 const formatDateAndTime = (isoString?: string) => {
   if (!isoString) return ''
   try {
@@ -27,7 +25,6 @@ const formatDateAndTime = (isoString?: string) => {
     const month = String(date.getMonth() + 1).padStart(2, '0')
     const hours = String(date.getHours()).padStart(2, '0')
     const minutes = String(date.getMinutes()).padStart(2, '0')
-    // Se a hora for 00:00, provavelmente é apenas data, então omitimos
     if (hours === '00' && minutes === '00') {
       return `${day}/${month}`
     }
@@ -73,25 +70,20 @@ export function WeightCard() {
 
   const today = useMemo(getTodayDate, [])
 
-  // Ordena todos os logs por timestamp decrescente (mais recente primeiro)
   const sortedLogs = useMemo(() => {
     return [...logs].sort(
       (a, b) => new Date(b.loggedAt).getTime() - new Date(a.loggedAt).getTime(),
     )
   }, [logs])
 
-  // Registros de hoje (já ordenados do mais recente para o mais antigo)
   const todayLogs = useMemo(() => {
     return sortedLogs.filter((l) => normalizeDateString(l.loggedAt) === today)
   }, [sortedLogs, today])
 
-  // Peso de hoje: o primeiro da lista (mais recente) ou null
   const currentLog = todayLogs.length > 0 ? todayLogs[0] : null
 
-  // Último peso: o primeiro registro com timestamp estritamente menor que o do currentLog
   const previousLog = useMemo(() => {
     if (!currentLog) {
-      // Se não há registro hoje, mostramos o mais recente geral (fallback)
       return sortedLogs.length > 0 ? sortedLogs[0] : null
     }
     const currentTimestamp = new Date(currentLog.loggedAt).getTime()

@@ -23,7 +23,6 @@ function getPetImage(petState: string) {
 export function VirtualPet({ className }: { className?: string }) {
   const { petState, petName, xp, level, streak } = useGamificationStore()
 
-  // Fallback: se não há pet definido, exibe mensagem educativa
   if (!petName) {
     return (
       <View

@@ -25,8 +25,8 @@ export const ProgressRing = ({
   progress,
   size = 120,
   strokeWidth = 12,
-  color = '#7C3AED', // bg-purple-600 equivalente
-  trackColor = '#F1F5F9', // bg-slate-100 equivalente
+  color = '#7C3AED',
+  trackColor = '#F1F5F9',
   children,
   className,
 }: ProgressRingProps) => {
@@ -34,7 +34,6 @@ export const ProgressRing = ({
   const circumference = radius * 2 * Math.PI
   const safeProgress = Math.min(Math.max(progress, 0), 100)
 
-  // Reanimated shared value para a animação
   const animatedProgress = useSharedValue(0)
 
   useEffect(() => {

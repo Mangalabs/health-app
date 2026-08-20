@@ -38,7 +38,6 @@ export const storage = {
   },
   async setToken(token: string): Promise<void> {
     try {
-      // Barreira de segurança contra 401
       if (!token || token === 'undefined' || token === 'null') return
       await SecureStore.setItemAsync(TOKEN_KEY, String(token))
     } catch (e) {
